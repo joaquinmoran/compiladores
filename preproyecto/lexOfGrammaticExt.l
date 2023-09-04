@@ -2,29 +2,32 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+#include "sintaxOfGrammaticExt.tab.h"
 %}
 
 %option noyywrap
 %option yylineno
 
-letter [a-zA-Z]      
+letter [a-zA-Z]*
 digit [0-9]  
 
 %%
 
-{digit}+        { 
-                  printf("INT : %d\n",atoi(yytext)); 
-                  return INT;
-                }
+{digit}+                   {yylval.i = atoi(yytext);
+                            printf("INT : %d\n",atoi(yytext)); 
+                            return INT;}
                 
 int                             {printf("%s\n",yytext);
                                 return INTEGER;}     
                                 
-bool                           {return BOOLEAN;}
+bool                           {return BOOL;}
 
 return                        {return RETURN;}
 
-{letter}({letter}|{digit})*      { printf("ID : %s\n", atoi(yytext));
+{letter}({letter}|{digit})*        {yylval.s =(char *) malloc(sizeof(yytext)*yyleng);
+                                    strcpy(yylval.s,yytext);
+                                    printf("ID : %s\n", yytext);
                                     return ID;}
 
 "-"                             {printf("%s\n",yytext);
@@ -33,7 +36,7 @@ return                        {return RETURN;}
 ":="                            {printf("%s\n",yytext);
                                     return TEQ;}
 
-[True | False]                   {printf("BOOL : %s\n", atoi(yytext))
+[0 | 1]                   {printf("BOOL : %s\n", yytext);
                                     return BOOL;}
 
 
