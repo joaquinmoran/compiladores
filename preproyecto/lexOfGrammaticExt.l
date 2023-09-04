@@ -21,7 +21,6 @@ digit [0-9]
 int                             {printf("%s\n",yytext);
                                 return INTEGER;}     
                                 
-bool                           {return BOOL;}
 
 return                        {return RETURN;}
 
@@ -35,9 +34,6 @@ return                        {return RETURN;}
 
 ":="                            {printf("%s\n",yytext);
                                     return TEQ;}
-
-[0 | 1]                   {printf("BOOL : %s\n", yytext);
-                                    return BOOL;}
 
 
 [+*;()]                          {printf("%s\n",yytext);
