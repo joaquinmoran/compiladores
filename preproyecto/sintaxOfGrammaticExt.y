@@ -4,20 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-
-struct nodes {
-    Tag = {"Var" , "Val", "Decl" , "Const"};
-    char *name;
-    bool type;
-    int val;
-}
-
-struct treeNode {
-    treeNode *left;
-    treeNode *right;
-    info nodes;
-}
-
+#include "ast.h"
 
 %}
 
@@ -30,7 +17,7 @@ struct treeNode {
 %token TEQ
 %token<s> INTEGER
 %token<b> BOOLEAN 
-%token<s> RETURN
+%token<i> RETURN
 
 %type<i> expr
 %type<i> IVALOR
@@ -38,6 +25,7 @@ struct treeNode {
 %type<s> TYPE
 %type<s> VAR
 %type<i> decl
+%type<i> ret
  
 
 
@@ -50,7 +38,7 @@ struct treeNode {
 
 
 
-prog: expr ';'  {printf("%s%d\n" , "Result: ", $1);} 
+prog: expr ';'   {printf("%s%d\n" , "Result: ", $1);} 
 
     | decl ';'  {printf("%s%d\n" , "Asignacion := ",$1);}
 
@@ -58,6 +46,7 @@ prog: expr ';'  {printf("%s%d\n" , "Result: ", $1);}
 
     | decl ';' prog {printf("%s%d\n" , "Asignacion := ", $1);} 
 
+    | ret ';' {printf("%s%s\n", "Return ", $1);}
 
     ;
 
@@ -82,12 +71,13 @@ expr: IVALOR         {$$ = $1;
     ;
 
 
-decl: TYPE VAR TEQ IVALOR   {$$ = $4; var = $4;}
+decl: TYPE VAR TEQ IVALOR   {
+                             $$ = newTree(info,)}
 
     | VAR TEQ expr {$$ = $3; var = $3;} 
   
 
-TYPE: INTEGER       {$$ = $1;}
+TYPE: INTEGER       {$$ = newNode("INTEGER",NULL, NULL)}
 
     | BOOLEAN       {$$ = $1;}
     ;
@@ -105,11 +95,11 @@ IVALOR: INT     {$$ = $1;}
 // //                     printf("%s%d\n", "Boolean constant", $1)}
 // //     ;
 
-// ret: R expr  {$$ = $2;}
-//     ;
+ret: R expr  {$$ = $2;}
+    ;
 
-// R: RETURN   
-//     ; 
+R: RETURN   
+    ; 
 
 %%
 
