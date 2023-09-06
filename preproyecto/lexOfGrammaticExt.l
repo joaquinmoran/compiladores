@@ -18,7 +18,7 @@ digit [0-9]
                             printf("INT : %d\n",atoi(yytext)); 
                             return INT;}
                 
-int                             {printf("%s\n",yytext);
+int                          {printf("%s\n",yytext);
                                 return INTEGER;}     
                                 
 

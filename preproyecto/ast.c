@@ -19,16 +19,19 @@ struct tree *newTree(struct treeNode info, struct tree *leftChild, struct tree *
     return root;
 }
 
-struct treeNode *newNode(char *t, char *n, int val){
-    struct treeNode *node = (struct treeNode *)malloc(sizeof(struct treeNode)); 
+struct tree *newNode(char *t, char *n, int val){
+    struct tree *node = (struct tree *)malloc(sizeof(struct tree)); 
 
     if(node == NULL){
         return NULL;
     }
 
-    node->type = t;
-    node->name = n;
-    node->value = val;
+    node->left = NULL;
+    node->right = NULL;
+
+    node->info.type = strdup(t);
+    node->info.name = strdup(n);
+    node->info.value = val;
 
     return node;
     

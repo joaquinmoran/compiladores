@@ -2,21 +2,20 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
 
 #include "ast.h"
 
 %}
 
-%union { int i; char *s; bool b;}
+%union { int i; char *s;}
 
 %token<i> INT
 %token<s> ID
-%token<b> BOOL
+%token<s> BOOL
 %token TMENOS
 %token TEQ
 %token<s> INTEGER
-%token<b> BOOLEAN 
+%token<s> BOOLEAN 
 %token<i> RETURN
 
 %type<i> expr
@@ -40,11 +39,15 @@
 
 prog: expr ';'   {printf("%s%d\n" , "Result: ", $1);} 
 
-    | decl ';'  {printf("%s%d\n" , "Asignacion := ",$1);}
+    | decl ';'  {$$ = $1;}
 
     | expr ';' prog {printf("%s%d\n" , "Result: ", $1);} 
 
-    | decl ';' prog {printf("%s%d\n" , "Asignacion := ", $1);} 
+    | decl ';' prog {printf("hola1");
+                    struct tree *node= newNode(NULL, ";", NULL);
+                    struct tree *lc = $1; 
+                    struct tree *rc = $3;  
+                    $$ = newTree(node->info, lc, rc);} 
 
     | ret ';' {printf("%s%s\n", "Return ", $1);}
 
@@ -65,27 +68,30 @@ expr: IVALOR         {$$ = $1;
 
     | expr TMENOS expr {$$ = $1 - $3;}
 
-    | VAR  {$$ = var;}
-
-    
     ;
 
 
-decl: TYPE VAR TEQ IVALOR   {
-                             $$ = newTree(info,)}
+decl: TYPE VAR TEQ IVALOR   
+                            {printf("hola");
+                                struct tree *i = $1;
+                             struct tree *node = newNode(i->info.type, "DECL",NULL);
+                             struct tree *lc = $2; 
+                             struct tree *rc = $4;
+                             $$ = newTree(node->info, lc, rc);}
 
-    | VAR TEQ expr {$$ = $3; var = $3;} 
+    ;
   
 
-TYPE: INTEGER       {$$ = newNode("INTEGER",NULL, NULL)}
+TYPE: INTEGER       {printf("hola1");$$ = newNode("INTEGER",NULL, NULL);}
 
-    | BOOLEAN       {$$ = $1;}
+    | BOOLEAN       {$$ = newNode("BOOLEAN",NULL,NULL);}
     ;
 
-VAR: ID    {$$ = $1;}
+VAR: ID    { printf("%s\n, hola");
+                $$ = newNode("ID",$1,NULL);}
     ;
 
-IVALOR: INT     {$$ = $1;}
+IVALOR: INT     {$$ = newNode("INTVAL",NULL,$1);}
 
 // BVALOR: BOOL    {$$ = $1;
 //                  printf("%s%d\n", "Boolean constant:",$1);

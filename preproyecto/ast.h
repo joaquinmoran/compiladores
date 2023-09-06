@@ -9,11 +9,12 @@ struct treeNode{
 };
 
 struct tree{
-    tree *left;
-    tree *right;
-    treeNode info;
+    struct tree *left;
+    struct tree *right;
+    struct treeNode info;
 };
 
 struct tree *newTree(struct treeNode info, struct tree *leftChild, struct tree *rightChild);
+struct tree *newNode(char *type, char *name, int value);
 
 #endif
