@@ -16,5 +16,6 @@ struct tree{
 
 struct tree *newTree(struct treeNode info, struct tree *leftChild, struct tree *rightChild);
 struct tree *newNode(char *type, char *name, int value);
+void printNode(struct tree *tree);
 
 #endif

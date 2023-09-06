@@ -39,15 +39,17 @@
 
 prog: expr ';'   {printf("%s%d\n" , "Result: ", $1);} 
 
-    | decl ';'  {$$ = $1;}
+    | decl ';'  {   struct tree *declTree = $1;
+                    // printf(declTree->info.type);
+                    // si dejo el print ese obtengo violacion de segmento nose porque
+                    // si hago printf en la prodccion decl puede ver bien toda la info del arbol
+                    // pero aca no 
+                    $$ = declTree;
+                }
 
     | expr ';' prog {printf("%s%d\n" , "Result: ", $1);} 
 
-    | decl ';' prog {printf("hola1");
-                    struct tree *node= newNode(NULL, ";", NULL);
-                    struct tree *lc = $1; 
-                    struct tree *rc = $3;  
-                    $$ = newTree(node->info, lc, rc);} 
+    | decl ';' prog { printf("sda");} 
 
     | ret ';' {printf("%s%s\n", "Return ", $1);}
 
@@ -72,26 +74,27 @@ expr: IVALOR         {$$ = $1;
 
 
 decl: TYPE VAR TEQ IVALOR   
-                            {printf("hola");
-                                struct tree *i = $1;
-                             struct tree *node = newNode(i->info.type, "DECL",NULL);
+                            {
+                             struct tree *i = $1;
                              struct tree *lc = $2; 
                              struct tree *rc = $4;
-                             $$ = newTree(node->info, lc, rc);}
+                             struct tree *genTree = newTree( newNode(i->info.type, "DECL",-1)->info, lc, rc);
+                             $$ = genTree;
+                             }
 
     ;
   
 
-TYPE: INTEGER       {printf("hola1");$$ = newNode("INTEGER",NULL, NULL);}
+TYPE: INTEGER       {$$ = newNode("INTEGER","NULL", -1);}
 
-    | BOOLEAN       {$$ = newNode("BOOLEAN",NULL,NULL);}
+    | BOOLEAN       {$$ = newNode("BOOLEAN","NULL",-1);}
     ;
 
-VAR: ID    { printf("%s\n, hola");
-                $$ = newNode("ID",$1,NULL);}
+VAR: ID    {
+                $$ = newNode("ID",$1,-1);}
     ;
 
-IVALOR: INT     {$$ = newNode("INTVAL",NULL,$1);}
+IVALOR: INT     {$$ = newNode("INTVAL","NULL",$1);}
 
 // BVALOR: BOOL    {$$ = $1;
 //                  printf("%s%d\n", "Boolean constant:",$1);
