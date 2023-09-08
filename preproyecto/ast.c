@@ -10,13 +10,10 @@ struct tree *newTree(struct treeNode info, struct tree *leftChild, struct tree *
 
     struct tree *root = (struct tree *)malloc(sizeof(struct tree));
 
-    printf("\n2");
     if(root == NULL) {
         printf("Error: null pointer");
     }else {
-        printf("\n21");
         if((leftChild != NULL) && (rightChild != NULL)){
-            printf("\n213");
             root->left = leftChild;
             root->right = rightChild;
         } else {
@@ -24,8 +21,6 @@ struct tree *newTree(struct treeNode info, struct tree *leftChild, struct tree *
         }
         root->info = info;
     }
-    printf("\n2134");
-    printf(root->left->info.name);
     return root;
 }
 
@@ -47,3 +42,28 @@ struct tree *newNode(char *t, char *n, int val){
     return node; 
 }
 
+void printNode(struct tree *tree){
+    if(tree != NULL){
+        printf("Root info: ");
+        printf("Type: %s\n", tree->info.type);
+        printf("Name: %s\n", tree->info.name);
+        printf("Value: %d\n", tree->info.value);
+    }
+    printf("\n");
+
+    if(tree->left != NULL){
+        printf("Left child info: ");
+        printf("Type: %s\n", tree->left->info.type);
+        printf("Name: %s\n", tree->left->info.name);
+        printf("Value: %d\n", tree->left->info.value);
+    }
+
+    printf("\n");
+
+    if(tree->right != NULL){
+        printf("Right child info: ");
+        printf("Type: %s\n", tree->right->info.type);
+        printf("Name: %s\n", tree->right->info.name);
+        printf("Value: %d\n", tree->right->info.value);
+    }
+}

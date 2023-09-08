@@ -6,8 +6,7 @@
 #include "ast.h"
 
 %}
-
-%union { int i; char *s;}
+%union { int i; char *s; struct tree *t}
 
 %token<i> INT
 %token<s> ID
@@ -19,11 +18,11 @@
 %token<i> RETURN
 
 %type<i> expr
-%type<i> IVALOR
+%type<t> IVALOR
 %type<i> prog
-%type<s> TYPE
-%type<s> VAR
-%type<i> decl
+%type<t> TYPE
+%type<t> VAR
+%type<t > decl
 %type<i> ret
  
 
@@ -40,10 +39,7 @@
 prog: expr ';'   {printf("%s%d\n" , "Result: ", $1);} 
 
     | decl ';'  {   struct tree *declTree = $1;
-                    // printf(declTree->info.type);
-                    // si dejo el print ese obtengo violacion de segmento nose porque
-                    // si hago printf en la prodccion decl puede ver bien toda la info del arbol
-                    // pero aca no 
+                    printNode(declTree);
                     $$ = declTree;
                 }
 
