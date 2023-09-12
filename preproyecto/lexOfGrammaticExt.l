@@ -14,7 +14,7 @@ digit [0-9]
 
 %%
 
-{digit}+                   {yylval.i = atoi(yytext);
+{digit}+                  {yylval.i = atoi(yytext);
                             printf("INT : %d\n",atoi(yytext)); 
                             return INT;}
                 
@@ -22,7 +22,6 @@ int                          {printf("%s\n",yytext);
                                 return INTEGER;}     
                                 
 
-return                        {return RETURN;}
 
 {letter}({letter}|{digit})*        {yylval.s =(char *) malloc(sizeof(yytext)*yyleng);
                                     strcpy(yylval.s,yytext);

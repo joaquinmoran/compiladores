@@ -15,15 +15,15 @@
 %token TEQ
 %token<s> INTEGER
 %token<s> BOOLEAN 
-%token<i> RETURN
 
 %type<i> expr
 %type<t> IVALOR
-%type<i> prog
+%type<t> prog
 %type<t> TYPE
 %type<t> VAR
-%type<t > decl
-%type<i> ret
+%type<t> decl
+%type<t> assig
+
  
 
 
@@ -35,32 +35,68 @@
 
 
 
-
-prog: expr ';'   {printf("%s%d\n" , "Result: ", $1);} 
+prog: expr ';'   {printf("%s%d\n" , "Result: ",$1);} 
 
     | decl ';'  {   struct tree *declTree = $1;
-                    printNode(declTree);
                     $$ = declTree;
                 }
 
-    | expr ';' prog {printf("%s%d\n" , "Result: ", $1);} 
+    | assig ';' {  struct tree *assigTree = $1;
+                    $$ = assigTree;
+                    
+                }
 
-    | decl ';' prog { printf("sda");} 
+    | expr ';' prog {$$ = $1;} 
 
-    | ret ';' {printf("%s%s\n", "Return ", $1);}
+    | decl ';' prog {  struct tree *lc = $1;
+                       struct tree *rc = $3;
+                       struct tree *declProgTree; 
+                       if(lc == NULL && rc == NULL) {
+                            printf("NULL POINTER ERROR \n");
+                       }else {
+                            declProgTree = newTree( newNode("PROG", "DECL->PROG",-1)->info, lc,rc);
+                       }
+                        $$ = declProgTree;
+                        printNode(declProgTree) ;
+                    } 
 
-    ;
+    | assig ';' prog {  
+                        struct tree *lc = $1;
+                        struct tree *rc = $3;
+                        struct tree *assigProgTree;
+                        if(lc == NULL && rc == NULL) {
+                            printf("NULL POINTER ERROR \n");
+                        }else {
+                            assigProgTree = newTree( newNode("PROG", "ASSIG->PROG",-1)->info, lc,rc);
+                        }
+                        $$ = assigProgTree;
+                        printNode(assigProgTree);
+                     }
 
 
-expr: IVALOR         {$$ = $1;
-                        printf("%s%d\n","Integer constant:", $1);}
-
-    // | TF            {$$ = $1;
-    //                 printf("%s\n", "Boolean constant:",$1);}
+expr: IVALOR        {struct tree *iVal = $1;
+                    $$ = iVal->info.value;
+                    }
 
     | expr '+' expr  {$$ = $1 + $3;}
 
-    | expr '*' expr {$$ = $1 * $3;}
+    | expr '*' expr {;
+                     struct tree *genTree;
+                     struct tree *lc = newNode("LP", "LEFTOPERATOR", $1);
+                     struct tree *rc = newNode("RP", "RIGHTOPERATOR", $3);
+                     if(lc->info.value == NULL || rc->info.value == NULL) {
+                        printf("NULL VALUE ERROR \n"); 
+                     }else {
+                        genTree = newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
+                     }
+                     
+                     if(genTree == NULL){
+                        printf("NULL POINTER ERROR \n");
+                     }else {
+                        $$ = genTree->info.value;
+                     }
+
+                    }
 
     | '(' expr ')'  {$$ = $2;}
 
@@ -79,6 +115,24 @@ decl: TYPE VAR TEQ IVALOR
                              }
 
     ;
+
+assig: VAR TEQ expr { 
+                    struct tree *lc = $1;
+                    struct tree *rc = $3;
+                    struct tree *genTree;
+                    if(lc == NULL && rc == NULL){
+                        printf("NULL POINTER ERROR \n");
+                    }else {
+                        genTree = newTree( newNode("ASSIG", "ExprASSIG", rc)->info, lc, rc);
+                    }
+
+                    if(genTree == NULL){
+                        printf("NULL POINTER ERROR \n");
+                     }else {
+                        $$ = genTree;
+                     }
+                    } 
+    ;
   
 
 TYPE: INTEGER       {$$ = newNode("INTEGER","NULL", -1);}
@@ -86,25 +140,14 @@ TYPE: INTEGER       {$$ = newNode("INTEGER","NULL", -1);}
     | BOOLEAN       {$$ = newNode("BOOLEAN","NULL",-1);}
     ;
 
-VAR: ID    {
-                $$ = newNode("ID",$1,-1);}
+VAR: ID    {  $$ = newNode("ID",$1,-1);}
     ;
 
-IVALOR: INT     {$$ = newNode("INTVAL","NULL",$1);}
-
-// BVALOR: BOOL    {$$ = $1;
-//                  printf("%s%d\n", "Boolean constant:",$1);
-//                 }
-
-// // TF: BOOL       {$$ = $1;
-// //                     printf("%s%d\n", "Boolean constant", $1)}
-// //     ;
-
-ret: R expr  {$$ = $2;}
-    ;
-
-R: RETURN   
-    ; 
+IVALOR: INT     {
+                struct tree *intValueTree = newNode("IVALOR", "IVALUE", $1);
+                $$  = intValueTree;
+                }
+     ;
 
 %%
 

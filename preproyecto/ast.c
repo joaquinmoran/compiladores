@@ -37,7 +37,10 @@ struct tree *newNode(char *t, char *n, int val){
     } else {
         printf("Null argument error");
     }
-    node->info.value = val;
+    if(val != NULL) {
+        node->info.value = val;
+    }
+
 
     return node; 
 }
@@ -57,7 +60,6 @@ void printNode(struct tree *tree){
         printf("Name: %s\n", tree->left->info.name);
         printf("Value: %d\n", tree->left->info.value);
     }
-
     printf("\n");
 
     if(tree->right != NULL){
