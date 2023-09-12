@@ -78,29 +78,59 @@ expr: IVALOR        {struct tree *iVal = $1;
                     $$ = iVal->info.value;
                     }
 
-    | expr '+' expr  {$$ = $1 + $3;}
+    | expr '+' expr  {
+                        struct tree *genTree;
+                        struct tree *lc = newNode("LP", "LEFTOPERATOR", $1);
+                        struct tree *rc = newNode("RP", "RIGHTOPERATOR", $3);
+                        if(lc->info.value == NULL || rc->info.value == NULL) {
+                            printf("NULL VALUE ERROR \n"); 
+                        }else {
+                            genTree = newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
+                        }
+                        
+                        if(genTree == NULL){
+                            printf("NULL POINTER ERROR \n");
+                        }else {
+                            $$ = genTree->info.value;
+                        }
 
-    | expr '*' expr {;
-                     struct tree *genTree;
-                     struct tree *lc = newNode("LP", "LEFTOPERATOR", $1);
-                     struct tree *rc = newNode("RP", "RIGHTOPERATOR", $3);
-                     if(lc->info.value == NULL || rc->info.value == NULL) {
-                        printf("NULL VALUE ERROR \n"); 
-                     }else {
-                        genTree = newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
-                     }
-                     
-                     if(genTree == NULL){
-                        printf("NULL POINTER ERROR \n");
-                     }else {
-                        $$ = genTree->info.value;
                      }
 
+    | expr '*' expr {
+                        struct tree *genTree;
+                        struct tree *lc = newNode("LP", "LEFTOPERATOR", $1);
+                        struct tree *rc = newNode("RP", "RIGHTOPERATOR", $3);
+                        if(lc->info.value == NULL || rc->info.value == NULL) {
+                            printf("NULL VALUE ERROR \n"); 
+                        }else {
+                            genTree = newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
+                        }
+                        
+                        if(genTree == NULL){
+                            printf("NULL POINTER ERROR \n");
+                        }else {
+                            $$ = genTree->info.value;
+                        }
                     }
 
     | '(' expr ')'  {$$ = $2;}
 
-    | expr TMENOS expr {$$ = $1 - $3;}
+    | expr TMENOS expr {    
+                            struct tree *genTree;
+                            struct tree *lc = newNode("LP", "LEFTOPERATOR", $1);
+                            struct tree *rc = newNode("RP", "RIGHTOPERATOR", $3);
+                            if(lc->info.value == NULL || rc->info.value == NULL) {
+                                printf("NULL VALUE ERROR \n"); 
+                            }else {
+                                genTree = newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
+                            }
+                            
+                            if(genTree == NULL){
+                                printf("NULL POINTER ERROR \n");
+                            }else {
+                                $$ = genTree->info.value;
+                            }
+                        }
 
     ;
 
