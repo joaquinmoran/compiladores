@@ -4,6 +4,83 @@
 #include <stdio.h>
 
 #include "ast.h"
+#include "symTable.h"
+
+
+
+struct node *head = NULL;
+
+__attribute__((constructor))
+void initialize_list() {
+    head = (struct node *)malloc(sizeof(struct node));
+    if(head == NULL){
+        fprintf(stderr, "Error: can not assing memory. \n");
+        exit(EXIT_FAILURE);
+    }
+    head->next = NULL;
+}
+
+int error_flag = 0;
+
+
+void addNodeToTable(struct node *newNode){
+    struct node *aux = (struct node *)malloc(sizeof(struct node));
+    if(head->next == NULL) {
+        head->next = newNode;
+        newNode->next = NULL;
+        
+    }else{
+        aux = head->next;
+        while(aux != NULL) {
+            if(strcmp(aux->info.name, newNode->info.name) == 0){
+                printf("Redeclared variable. \n");
+                error_flag = 1;
+                break;
+            }
+            aux = aux->next;
+        }
+        if(aux == NULL){
+            newNode->next = NULL;
+            aux = newNode;
+        }
+    }
+}
+
+void printTable(){
+    printf("Lo que tiene head es: %s", head->next->info.name);
+    struct node *aux = (struct node *)malloc(sizeof(struct node));
+    if(head->next == NULL){
+        printf("EMPTY TABLE");
+        return;
+    }
+    aux = head->next;
+    while(aux->next != NULL){
+        printf("Table symbol: %d", aux->next->info.value);
+    }
+
+}
+
+
+
+struct node *newTableNode(char *n, char *f, char *t, char *p, int v){
+    struct node *sym = (struct node *)malloc(sizeof(struct node));
+
+    if (sym == NULL) {
+        fprintf(stderr, "Error: no se pudo asignar memoria.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    sym->info.name = n;
+    sym->info.flag = f;
+    sym->info.type = t;
+    sym->info.param = p;
+    sym->info.value = v;
+
+    return sym;
+
+}
+
+
 
 %}
 %union { int i; char *s; struct tree *t}
@@ -14,7 +91,8 @@
 %token TMENOS
 %token TEQ
 %token<s> INTEGER
-%token<s> BOOLEAN 
+%token<s> BOOLEAN
+%token<t> RETURN
 
 %type<i> expr
 %type<t> IVALOR
@@ -23,11 +101,9 @@
 %type<t> VAR
 %type<t> decl
 %type<t> assig
+%type<t> ret;
 
- 
 
-
-    
 %left '+' TMENOS
 %left '*'
 
@@ -35,32 +111,33 @@
 
 
 
-prog: expr ';'   {printf("%s%d\n" , "Result: ",$1);} 
+prog:  decl ';'      {
+                        struct tree *declTree = $1;
+                        printNode(declTree);
+                        $$ = declTree;
+                    }
 
-    | decl ';'  {   struct tree *declTree = $1;
-                    $$ = declTree;
-                }
+    | assig ';'     {
+                        struct tree *assigTree = $1;
+                        $$ = assigTree;
+                     }
 
-    | assig ';' {  struct tree *assigTree = $1;
-                    $$ = assigTree;
-                    
-                }
 
-    | expr ';' prog {$$ = $1;} 
+    | decl ';' prog     {
+                            struct tree *lc = $1;
+                            struct tree *rc = $3;
+                            struct tree *declProgTree;
+                            if(lc == NULL && rc == NULL) {
+                                    printf("NULL POINTER ERROR \n");
+                            }else {
+                                    declProgTree = newTree( newNode("PROG", "DECL->PROG",-1)->info, lc,rc);
+                            }
+                                $$ = declProgTree;
+                                printNode(declProgTree);
+                                printNode(lc);
+                        }
 
-    | decl ';' prog {  struct tree *lc = $1;
-                       struct tree *rc = $3;
-                       struct tree *declProgTree; 
-                       if(lc == NULL && rc == NULL) {
-                            printf("NULL POINTER ERROR \n");
-                       }else {
-                            declProgTree = newTree( newNode("PROG", "DECL->PROG",-1)->info, lc,rc);
-                       }
-                        $$ = declProgTree;
-                        printNode(declProgTree) ;
-                    } 
-
-    | assig ';' prog {  
+    | assig ';' prog {
                         struct tree *lc = $1;
                         struct tree *rc = $3;
                         struct tree *assigProgTree;
@@ -73,21 +150,28 @@ prog: expr ';'   {printf("%s%d\n" , "Result: ",$1);}
                         printNode(assigProgTree);
                      }
 
+    | ret ';'        {
+                        $$ = $1;
+                     }
 
-expr: IVALOR        {struct tree *iVal = $1;
-                    $$ = iVal->info.value;
-                    }
+    ;
+
+
+expr: IVALOR            {
+                            struct tree *iVal = $1;
+                            $$ = iVal->info.value;
+                        }
 
     | expr '+' expr  {
                         struct tree *genTree;
                         struct tree *lc = newNode("LP", "LEFTOPERATOR", $1);
                         struct tree *rc = newNode("RP", "RIGHTOPERATOR", $3);
                         if(lc->info.value == NULL || rc->info.value == NULL) {
-                            printf("NULL VALUE ERROR \n"); 
+                            printf("NULL VALUE ERROR \n");
                         }else {
                             genTree = newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
                         }
-                        
+
                         if(genTree == NULL){
                             printf("NULL POINTER ERROR \n");
                         }else {
@@ -101,11 +185,11 @@ expr: IVALOR        {struct tree *iVal = $1;
                         struct tree *lc = newNode("LP", "LEFTOPERATOR", $1);
                         struct tree *rc = newNode("RP", "RIGHTOPERATOR", $3);
                         if(lc->info.value == NULL || rc->info.value == NULL) {
-                            printf("NULL VALUE ERROR \n"); 
+                            printf("NULL VALUE ERROR \n");
                         }else {
                             genTree = newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
                         }
-                        
+
                         if(genTree == NULL){
                             printf("NULL POINTER ERROR \n");
                         }else {
@@ -115,16 +199,16 @@ expr: IVALOR        {struct tree *iVal = $1;
 
     | '(' expr ')'  {$$ = $2;}
 
-    | expr TMENOS expr {    
+    | expr TMENOS expr {
                             struct tree *genTree;
                             struct tree *lc = newNode("LP", "LEFTOPERATOR", $1);
                             struct tree *rc = newNode("RP", "RIGHTOPERATOR", $3);
                             if(lc->info.value == NULL || rc->info.value == NULL) {
-                                printf("NULL VALUE ERROR \n"); 
+                                printf("NULL VALUE ERROR \n");
                             }else {
                                 genTree = newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
                             }
-                            
+
                             if(genTree == NULL){
                                 printf("NULL POINTER ERROR \n");
                             }else {
@@ -134,50 +218,73 @@ expr: IVALOR        {struct tree *iVal = $1;
 
     ;
 
-
-decl: TYPE VAR TEQ IVALOR   
+decl: TYPE VAR TEQ IVALOR
                             {
-                             struct tree *i = $1;
-                             struct tree *lc = $2; 
-                             struct tree *rc = $4;
-                             struct tree *genTree = newTree( newNode(i->info.type, "DECL",-1)->info, lc, rc);
-                             $$ = genTree;
+
+                                struct tree *i = $1;
+                                struct tree *lc = $2;
+                                struct tree *rc = $4;
+                                if(i->info.type != NULL && lc->info.name != NULL && rc->info.value != NULL){
+                                    struct node *sym = newTableNode(lc->info.name, "VARIABLE", i->info.type, NULL, rc->info.value);
+                                    addNodeToTable(sym);
+                                    if(error_flag){
+                                        printf("Error found, aborting...\n");
+                                        exit(EXIT_FAILURE);
+                                    }
+                                }else{
+                                     printf("NULL POINTER ERROR");
+                                 }
+                                struct tree *genTree = newTree( newNode(i->info.type, "DECL",-1)->info, lc, rc);
+                                $$ = genTree;
                              }
 
+
     ;
 
-assig: VAR TEQ expr { 
-                    struct tree *lc = $1;
-                    struct tree *rc = $3;
-                    struct tree *genTree;
-                    if(lc == NULL && rc == NULL){
-                        printf("NULL POINTER ERROR \n");
-                    }else {
-                        genTree = newTree( newNode("ASSIG", "ExprASSIG", rc)->info, lc, rc);
-                    }
+assig: VAR TEQ expr     {
+                            struct tree *lc = $1;
+                            struct tree *rc = $3;
+                            struct tree *genTree;
+                            if(lc == NULL && rc == NULL){
+                                printf("NULL POINTER ERROR \n");
+                            }else {
+                                genTree = newTree( newNode("ASSIG", "ExprASSIG", rc)->info, lc, rc);
+                            }
 
-                    if(genTree == NULL){
-                        printf("NULL POINTER ERROR \n");
-                     }else {
-                        $$ = genTree;
-                     }
-                    } 
-    ;
-  
+                            if(genTree == NULL){
+                                printf("NULL POINTER ERROR \n");
+                            }else {
+                                $$ = genTree;
+                            }
+                        }
+            ;
+
 
 TYPE: INTEGER       {$$ = newNode("INTEGER","NULL", -1);}
 
     | BOOLEAN       {$$ = newNode("BOOLEAN","NULL",-1);}
     ;
 
-VAR: ID    {  $$ = newNode("ID",$1,-1);}
+VAR: ID             {  $$ = newNode("ID",$1,-1);}
     ;
 
-IVALOR: INT     {
-                struct tree *intValueTree = newNode("IVALOR", "IVALUE", $1);
-                $$  = intValueTree;
-                }
+IVALOR: INT         {
+                        struct tree *intValueTree = newNode("IVALOR", "IVALUE", $1);
+                        $$  = intValueTree;
+                    }
      ;
+
+ret:  RETURN VAR     {
+                        struct tree *retTree = newNode("RETURN", "RETURN->VAR", -1);
+                        $$ = retTree;
+                    }
+
+    | RETURN expr   {
+                        struct tree *exprVal = $2;
+                        struct tree *retTree = newNode("RETURN", "RETUN-EXPR", exprVal);
+                        $$ = retTree;
+                    }
+    ;
 
 %%
 

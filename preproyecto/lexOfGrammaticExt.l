@@ -21,7 +21,8 @@ digit [0-9]
 int                          {printf("%s\n",yytext);
                                 return INTEGER;}     
                                 
-
+return                      {printf("%s\n",yytext);
+                                return RETURN;} 
 
 {letter}({letter}|{digit})*        {yylval.s =(char *) malloc(sizeof(yytext)*yyleng);
                                     strcpy(yylval.s,yytext);
