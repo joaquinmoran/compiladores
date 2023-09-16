@@ -66,7 +66,7 @@ void printTable(){
 
 }
 
-bool setValue(int value, char *name){
+bool setValueByName(int value, char *name){
     if(head->next != NULL){
         if(strcmp(head->next->info.name, name) == 0){
             printf("Old value: %d\n", head->next->info.value);
@@ -87,10 +87,24 @@ bool setValue(int value, char *name){
         }
     }
     return false;
-
-
 }
 
+int getValueByName(char *name){
+    if(head->next != NULL){
+        if(strcmp(head->next->info.name, name) == 0){
+            return head->next->info.value;
+        }
+        struct node *aux = (struct node *)malloc(sizeof(struct node));
+        aux = head->next;
+        while(aux != NULL){
+            if(strcmp(aux->info.name, name) == 0){
+                return aux->info.value;
+            }
+            aux = aux->next;
+        }
+    }
+    return -9999; 
+}
 
 struct node *newTableNode(char *n, char *f, char *t, char *p, int v){
     struct node *sym = (struct node *)malloc(sizeof(struct node));
@@ -176,7 +190,8 @@ prog:  decl ';'      {
                         $$ = assigProgTree;
                      }
 
-    | ret ';'        {
+    | ret ';'        {  
+                        printf("Result %d\n", $1->info.value);
                         $$ = $1;
                      }
 
@@ -275,7 +290,7 @@ assig: VAR TEQ expr     {
                                 printf("NULL POINTER ERROR \n");
                             }else {
                                 genTree = newTree( newNode("ASSIG", "ExprASSIG", rc)->info, lc, rc);
-                                bool var = setValue(rc, lc->info.name);
+                                bool var = setValueByName(rc, lc->info.name);
                                 if(var != true){
                                     printf("Error found(undeclared variable), aborting...\n");
                                     exit(EXIT_FAILURE);
@@ -305,8 +320,10 @@ IVALOR: INT         {
                     }
      ;
 
-ret:  RETURN VAR     {
-                        struct tree *retTree = newNode("RETURN", "RETURN->VAR", -1);
+ret:  RETURN VAR     {  char *n = $2->info.name;
+                        int value = getValueByName(n);
+                        struct tree *var = newNode("RETURN", "RETURN->VAR", value);
+                        struct tree *retTree = newTree(var->info, var, var);  
                         $$ = retTree;
                     }
 
