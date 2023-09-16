@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "ast.h"
 #include "symTable.h"
@@ -25,10 +26,10 @@ int error_flag = 0;
 
 void addNodeToTable(struct node *newNode){
     struct node *aux = (struct node *)malloc(sizeof(struct node));
+    struct node *aux1 = (struct node *)malloc(sizeof(struct node));
     if(head->next == NULL) {
         head->next = newNode;
-        newNode->next = NULL;
-        
+        newNode->next = NULL;        
     }else{
         aux = head->next;
         while(aux != NULL) {
@@ -37,29 +38,58 @@ void addNodeToTable(struct node *newNode){
                 error_flag = 1;
                 break;
             }
+            aux1 = aux;
             aux = aux->next;
         }
         if(aux == NULL){
+            aux1->next = newNode;
             newNode->next = NULL;
             aux = newNode;
         }
     }
+    printTable();
+    
 }
 
 void printTable(){
-    printf("Lo que tiene head es: %s", head->next->info.name);
     struct node *aux = (struct node *)malloc(sizeof(struct node));
     if(head->next == NULL){
         printf("EMPTY TABLE");
         return;
     }
     aux = head->next;
-    while(aux->next != NULL){
-        printf("Table symbol: %d", aux->next->info.value);
+    while(aux != NULL){
+        printf("Table symbol: %s\n", aux->info.name);
+        aux = aux->next;
     }
+
 
 }
 
+bool setValue(int value, char *name){
+    if(head->next != NULL){
+        if(strcmp(head->next->info.name, name) == 0){
+            printf("Old value: %d\n", head->next->info.value);
+            head->next->info.value = value;
+            printf("New value: %d\n", head->next->info.value);
+            return true;
+        }    
+        struct node *aux = (struct node *)malloc(sizeof(struct node));
+        aux = head->next;
+        while(aux != NULL) {
+            if(strcmp(aux->info.name,name) == 0){
+                printf("Old value: %d\n", head->next->info.value);
+                aux->info.value = value;
+                printf("New value: %d\n", head->next->info.value);
+                return true;
+            }
+            aux = aux->next;
+        }
+    }
+    return false;
+
+
+}
 
 
 struct node *newTableNode(char *n, char *f, char *t, char *p, int v){
@@ -113,7 +143,6 @@ struct node *newTableNode(char *n, char *f, char *t, char *p, int v){
 
 prog:  decl ';'      {
                         struct tree *declTree = $1;
-                        printNode(declTree);
                         $$ = declTree;
                     }
 
@@ -133,8 +162,6 @@ prog:  decl ';'      {
                                     declProgTree = newTree( newNode("PROG", "DECL->PROG",-1)->info, lc,rc);
                             }
                                 $$ = declProgTree;
-                                printNode(declProgTree);
-                                printNode(lc);
                         }
 
     | assig ';' prog {
@@ -147,7 +174,6 @@ prog:  decl ';'      {
                             assigProgTree = newTree( newNode("PROG", "ASSIG->PROG",-1)->info, lc,rc);
                         }
                         $$ = assigProgTree;
-                        printNode(assigProgTree);
                      }
 
     | ret ';'        {
@@ -228,7 +254,7 @@ decl: TYPE VAR TEQ IVALOR
                                     struct node *sym = newTableNode(lc->info.name, "VARIABLE", i->info.type, NULL, rc->info.value);
                                     addNodeToTable(sym);
                                     if(error_flag){
-                                        printf("Error found, aborting...\n");
+                                        printf("Error found(redeclared variable), aborting...\n");
                                         exit(EXIT_FAILURE);
                                     }
                                 }else{
@@ -249,13 +275,18 @@ assig: VAR TEQ expr     {
                                 printf("NULL POINTER ERROR \n");
                             }else {
                                 genTree = newTree( newNode("ASSIG", "ExprASSIG", rc)->info, lc, rc);
+                                bool var = setValue(rc, lc->info.name);
+                                if(var != true){
+                                    printf("Error found(undeclared variable), aborting...\n");
+                                    exit(EXIT_FAILURE);
+                                }
                             }
-
                             if(genTree == NULL){
                                 printf("NULL POINTER ERROR \n");
                             }else {
                                 $$ = genTree;
                             }
+
                         }
             ;
 
