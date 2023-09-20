@@ -7,6 +7,7 @@
 #include "ast.h"
 #include "symTable.h"
 
+extern int yylineno;
 
 
 struct node *head = NULL;
@@ -78,9 +79,9 @@ bool setValueByName(int value, char *name){
         aux = head->next;
         while(aux != NULL) {
             if(strcmp(aux->info.name,name) == 0){
-                printf("Old value: %d\n", head->next->info.value);
+                printf("Old value: %d\n", aux->info.value);
                 aux->info.value = value;
-                printf("New value: %d\n", head->next->info.value);
+                printf("New value: %d\n", aux->info.value);
                 return true;
             }
             aux = aux->next;
@@ -103,6 +104,7 @@ int getValueByName(char *name){
             aux = aux->next;
         }
     }
+    error_flag = 1;
     return -9999; 
 }
 
@@ -128,6 +130,7 @@ struct node *newTableNode(char *n, char *f, char *t, char *p, int v){
 
 %}
 %union { int i; char *s; struct tree *t}
+
 
 %token<i> INT
 %token<s> ID
@@ -203,6 +206,17 @@ expr: IVALOR            {
                             $$ = iVal->info.value;
                         }
 
+    | VAR               {
+                            struct tree *iVar = $1;
+                            int val = getValueByName(iVar->info.name);
+                            if(error_flag){
+                                printf("ERROR(undeclared variable in line %d), aborting...\n", yylineno);
+                                exit(EXIT_FAILURE);
+                            }
+                            iVar->info.value = val;
+                            $$ = val;
+                        }
+
     | expr '+' expr  {
                         struct tree *genTree;
                         struct tree *lc = newNode("LP", "LEFTOPERATOR", $1);
@@ -240,6 +254,7 @@ expr: IVALOR            {
 
     | '(' expr ')'  {$$ = $2;}
 
+
     | expr TMENOS expr {
                             struct tree *genTree;
                             struct tree *lc = newNode("LP", "LEFTOPERATOR", $1);
@@ -269,7 +284,7 @@ decl: TYPE VAR TEQ IVALOR
                                     struct node *sym = newTableNode(lc->info.name, "VARIABLE", i->info.type, NULL, rc->info.value);
                                     addNodeToTable(sym);
                                     if(error_flag){
-                                        printf("Error found(redeclared variable), aborting...\n");
+                                        printf("ERROR(redeclared variable in line %d), aborting... \n", yylineno);
                                         exit(EXIT_FAILURE);
                                     }
                                 }else{
@@ -289,10 +304,10 @@ assig: VAR TEQ expr     {
                             if(lc == NULL && rc == NULL){
                                 printf("NULL POINTER ERROR \n");
                             }else {
-                                genTree = newTree( newNode("ASSIG", "ExprASSIG", rc)->info, lc, rc);
+                                genTree = newTree( newNode("ASSIG", "ASSIG-EXPR", rc)->info, lc, rc);
                                 bool var = setValueByName(rc, lc->info.name);
                                 if(var != true){
-                                    printf("Error found(undeclared variable), aborting...\n");
+                                    printf("ERROR(undeclared variable in line %d), aborting...\n", yylineno);
                                     exit(EXIT_FAILURE);
                                 }
                             }
@@ -301,9 +316,10 @@ assig: VAR TEQ expr     {
                             }else {
                                 $$ = genTree;
                             }
-
                         }
-            ;
+
+    
+    ;
 
 
 TYPE: INTEGER       {$$ = newNode("INTEGER","NULL", -1);}
@@ -320,14 +336,8 @@ IVALOR: INT         {
                     }
      ;
 
-ret:  RETURN VAR     {  char *n = $2->info.name;
-                        int value = getValueByName(n);
-                        struct tree *var = newNode("RETURN", "RETURN->VAR", value);
-                        struct tree *retTree = newTree(var->info, var, var);  
-                        $$ = retTree;
-                    }
 
-    | RETURN expr   {
+ret: RETURN expr   {
                         struct tree *exprVal = $2;
                         struct tree *retTree = newNode("RETURN", "RETUN-EXPR", exprVal);
                         $$ = retTree;
@@ -335,8 +345,5 @@ ret:  RETURN VAR     {  char *n = $2->info.name;
     ;
 
 %%
-
-
-
 
 

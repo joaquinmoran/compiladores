@@ -24,10 +24,17 @@ int                          {printf("%s\n",yytext);
 return                      {printf("%s\n",yytext);
                                 return RETURN;} 
 
+True                         {printf("%s\n",yytext);
+                                return BOOL;} 
+
+False                       {printf("%s\n",yytext);
+                                return BOOL;} 
+
 {letter}({letter}|{digit})*        {yylval.s =(char *) malloc(sizeof(yytext)*yyleng);
                                     strcpy(yylval.s,yytext);
                                     printf("ID : %s\n", yytext);
                                     return ID;}
+        
 
 "-"                             {printf("%s\n",yytext);
                                   return TMENOS;}
