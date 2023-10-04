@@ -18,17 +18,20 @@ digit [0-9]
                             printf("INT : %d\n",atoi(yytext)); 
                             return INT;}
                 
-int                          {printf("%s\n",yytext);
-                                return INTEGER;}     
+int                          {return INTEGER;}
+
+bool                         {printf("%s\n",yytext);
+                                return BOOLEAN;}
+
                                 
 return                      {printf("%s\n",yytext);
                                 return RETURN;} 
 
 True                         {printf("%s\n",yytext);
-                                return BOOL;} 
+                                return TBOOL;} 
 
 False                       {printf("%s\n",yytext);
-                                return BOOL;} 
+                                return FBOOL;} 
 
 {letter}({letter}|{digit})*        {yylval.s =(char *) malloc(sizeof(yytext)*yyleng);
                                     strcpy(yylval.s,yytext);

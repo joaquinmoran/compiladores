@@ -37,9 +37,9 @@ struct tree *newNode(char *t, char *n, int val){
     } else {
         printf("Null argument error");
     }
-    if(val != NULL) {
-        node->info.value = val;
-    }
+   
+    node->info.value = val;
+    
 
 
     return node; 
