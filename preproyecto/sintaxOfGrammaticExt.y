@@ -187,8 +187,7 @@ prog:  decl ';'      {
 
     | assig ';'     {
                         struct tree *assigTree = $1;
-                        printf("%s",assigTree->info.type);
-                        traverseAST(assigTree);
+                        // breadthFirstTraversal(assigTree);
                         $$ = assigTree;
                      }
 
@@ -198,11 +197,12 @@ prog:  decl ';'      {
                             struct tree *rc = $3;
                             struct tree *declProgTree;
                             if(lc == NULL && rc == NULL) {
-                                    printf("NULL POINTER ERROR \n");
+                                printf("NULL POINTER ERROR \n");
                             }else {
-                                    declProgTree = newTree( newNode("PROG", "DECL->PROG",-1)->info, lc,rc);
+                                declProgTree = newTree( newNode("PROG", "DECL->PROG",-1)->info, lc,rc);
                             }
-                                $$ = declProgTree;
+                            breadthFirstTraversal(declProgTree);
+                            $$ = declProgTree;
                         }
 
     | assig ';' prog {
@@ -280,8 +280,8 @@ expr: IVALOR            {
 
     | expr '+' expr  {  
                         struct tree *genTree;
-                        struct tree *lc = newNode("LP", "LEFTOPERATOR", $1->info.value);
-                        struct tree *rc = newNode("RP", "RIGHTOPERATOR", $3->info.value);
+                        struct tree *lc = newNode("LO", "LEFTOPERATOR", $1->info.value);
+                        struct tree *rc = newNode("RO", "RIGHTOPERATOR", $3->info.value);
                         genTree = newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
                         if(genTree == NULL){
                             printf("NULL POINTER ERROR \n");
@@ -293,8 +293,8 @@ expr: IVALOR            {
 
     | expr '*' expr {
                         struct tree *genTree;
-                        struct tree *lc = newNode("LP", "LEFTOPERATOR", $1->info.value);
-                        struct tree *rc = newNode("RP", "RIGHTOPERATOR", $3->info.value);  
+                        struct tree *lc = newNode("LO", "LEFTOPERATOR", $1->info.value);
+                        struct tree *rc = newNode("RO", "RIGHTOPERATOR", $3->info.value);  
                         genTree = newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
                         if(genTree == NULL){
                             printf("NULL POINTER ERROR \n");
@@ -308,8 +308,8 @@ expr: IVALOR            {
 
     | expr TMENOS expr {
                             struct tree *genTree;
-                            struct tree *lc = newNode("LP", "LEFTOPERATOR", $1->info.value);
-                            struct tree *rc = newNode("RP", "RIGHTOPERATOR", $3->info.value);
+                            struct tree *lc = newNode("LO", "LEFTOPERATOR", $1->info.value);
+                            struct tree *rc = newNode("RO", "RIGHTOPERATOR", $3->info.value);
                             genTree = newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
                             if(genTree == NULL){
                                 printf("NULL POINTER ERROR \n");
@@ -336,7 +336,7 @@ decl: TYPE VAR TEQ expr
                                 }else{
                                      printf("NULL POINTER ERROR");
                                 }
-                                struct tree *genTree = newTree( newNode(i->info.type, "DECL",-1)->info, lc, rc);
+                                struct tree *genTree = newTree( newNode("DECL",i->info.type,-1)->info, lc, rc);
                                 $$ = genTree;
                              }
 

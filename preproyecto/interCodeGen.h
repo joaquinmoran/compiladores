@@ -4,7 +4,7 @@
 
 struct tree *expressionClass(struct tree *exprNode);
 void assignmentClass(struct  tree *assigNode);
-void traverseAST(struct tree *node);
+void breadthFirstTraversal(struct tree *node);
 
 
 #endif
