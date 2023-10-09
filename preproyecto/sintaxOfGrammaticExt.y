@@ -280,8 +280,8 @@ expr: IVALOR            {
 
     | expr '+' expr  {  
                         struct tree *genTree;
-                        struct tree *lc = newNode("LO", "LEFTOPERATOR", $1->info.value);
-                        struct tree *rc = newNode("RO", "RIGHTOPERATOR", $3->info.value);
+                        struct tree *lc = $1;
+                        struct tree *rc = $3;
                         genTree = newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
                         if(genTree == NULL){
                             printf("NULL POINTER ERROR \n");
@@ -293,8 +293,8 @@ expr: IVALOR            {
 
     | expr '*' expr {
                         struct tree *genTree;
-                        struct tree *lc = newNode("LO", "LEFTOPERATOR", $1->info.value);
-                        struct tree *rc = newNode("RO", "RIGHTOPERATOR", $3->info.value);  
+                        struct tree *lc = $1;
+                        struct tree *rc = $3; 
                         genTree = newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
                         if(genTree == NULL){
                             printf("NULL POINTER ERROR \n");
@@ -308,8 +308,8 @@ expr: IVALOR            {
 
     | expr TMENOS expr {
                             struct tree *genTree;
-                            struct tree *lc = newNode("LO", "LEFTOPERATOR", $1->info.value);
-                            struct tree *rc = newNode("RO", "RIGHTOPERATOR", $3->info.value);
+                            struct tree *lc = $1;
+                            struct tree *rc = $3;
                             genTree = newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
                             if(genTree == NULL){
                                 printf("NULL POINTER ERROR \n");
