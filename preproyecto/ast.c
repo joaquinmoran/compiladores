@@ -45,6 +45,39 @@ struct tree *newNode(char *t, char *n, int val){
     return node; 
 }
 
+// void generateDotFile(FILE *dotFile, struct tree *node, int i) {
+//     if (node == NULL) {
+//         return;
+//     }
+
+//     fprintf(dotFile, "%d [label=\"%s, %s, %d\"];\n", i, node->info.type, node->info.name, node->info.value);
+
+//     if (node->left != NULL) {
+//         fprintf(dotFile, "%d -> %s;\n", i, node->left->info.name);
+//         generateDotFile(dotFile, node->left, i++);
+//     }
+
+//     if (node->right != NULL) {
+//         fprintf(dotFile, "%d -> %s;\n", i, node->right->info.name);
+//         generateDotFile(dotFile, node->right, i++);
+//     }
+// }
+
+// void saveDotFile(struct tree *root) {
+//     FILE *dotFile = fopen("tree.dot", "w");
+//     int i = 0;
+//     if (dotFile == NULL) {
+//         printf("Error: No se pudo abrir el archivo .dot");
+//         return;
+//     }
+
+//     fprintf(dotFile, "digraph Tree {\n");
+//     generateDotFile(dotFile, root, i);
+//     fprintf(dotFile, "}\n");
+//     fclose(dotFile);
+// }
+
+
 void printNode(struct tree *tree){
     if(tree != NULL){
         printf("Root info: ");

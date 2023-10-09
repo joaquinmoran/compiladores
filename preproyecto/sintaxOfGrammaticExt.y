@@ -201,6 +201,7 @@ prog:  decl ';'      {
                             }else {
                                 declProgTree = newTree( newNode("PROG", "DECL->PROG",-1)->info, lc,rc);
                             }
+                            //saveDotFile(declProgTree);
                             breadthFirstTraversal(declProgTree);
                             $$ = declProgTree;
                         }
@@ -350,7 +351,7 @@ assig: VAR TEQ expr     {
                             if(lc == NULL && rc == NULL){
                                 printf("NULL POINTER ERROR \n");
                             }else {
-                                genTree = newTree( newNode("ASSIG", "ASSIG-EXPR", rc->info.value)->info, lc, rc);
+                                genTree = newTree( newNode("ASSIG", "ASSIG->EXPR", rc->info.value)->info, lc, rc);
                                 bool var = setValueByName(rc->info.value, lc->info.name);
                                 if(var != true){
                                     printf("ERROR(undeclared variable in line %d).\n", yylineno);
