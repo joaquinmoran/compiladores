@@ -182,6 +182,7 @@ struct node *newTableNode(char *n, char *f, char *t, char *p, int v){
 
 prog:  decl ';'      {
                         struct tree *declTree = $1;
+                        //breadthFirstTraversal(declTree);
                         $$ = declTree;
                     }
 

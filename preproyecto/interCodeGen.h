@@ -1,10 +1,12 @@
-#ifndef INTERCODE_h
-#define INTERCODE_h
+#ifndef INTERCODEGEN_h
+#define INTERCODEGEN_h
+
+struct listNode{
+    struct listNode *next;
+    char *instr;
+};
 
 
-struct tree *expressionClass(struct tree *exprNode);
-void assignmentClass(struct  tree *assigNode);
-void breadthFirstTraversal(struct tree *node);
-
+void breadthFirstTraversal(struct tree *root);
 
 #endif

@@ -4,195 +4,89 @@
 
 #include "ast.h"
 #include "symTable.h"
+#include "interCodeGen.h"
 
 int MAX_NODES = 100;
 int i = 1;
-FILE *file;
+struct listNode *instrListHead = NULL;
 
-void declClass(struct  tree *declNode){
 
-    char *name = declNode->left->info.name;
-    int val = declNode->right->info.value;
-    fprintf(file, "T%d := %d\n", i, val);
-    fprintf(file, "%s := T%d\n", name, i);
-    fflush(file);
-    i++;
-
+__attribute__((constructor))
+void initialize_instrList() {
+    instrListHead = (struct listNode *)malloc(sizeof(struct listNode));
+    if(instrListHead  == NULL){
+        fprintf(stderr, "Error: can not assing memory. \n");
+        exit(EXIT_FAILURE);
+    }
+    instrListHead ->next = NULL;
 }
 
-char *exprClass(struct tree *exprNode){
-    char *name = exprNode->left->info.name;
-    char result[10];
-    if(strcmp(exprNode->info.name, "PROD") == 0){
-        struct tree *right = exprNode;
-        if(strcmp(right->left->info.type, "ID") == 0){
-            if(strcmp(right->right->info.type, "ID") == 0){
-                char *nameLO = right->left->info.name;
-                char *nameRO = right->right->info.name;
-                fprintf(file, "T%d := %s * %s\n", i, nameLO, nameRO);
-                fflush(file);
-                sprintf(result, "T%d",i);
-                i++;
-            }else{
-                char *nameLO = right->left->info.name;
-                int val = right->right->info.value;
-                fprintf(file, "T%d := %s * %d\n", i, nameLO, val);
+struct listNode *newListNode(char *instr){
+    struct listNode *newNode = (struct listNode *)malloc(sizeof(struct listNode));
 
-                fflush(file);
-                sprintf(result, "T%d",i);
-                i++;
-            }
-        }else{
-            if(strcmp(right->right->info.type, "ID") == 0){
-                char *nameRO = right->right->info.name;
-                    int val = right->left->info.value;
-                    fprintf(file, "T%d := %d * %s\n", i, val, nameRO);
-                    fflush(file);
-                    sprintf(result, "T%d",i);
-                    i++;
-                }else{
-                    int valR = right->right->info.value;
-                    int valL = right->left->info.value;
-                    fprintf(file, "T%d := %d * %d\n", i, valL, valR);
-                    fflush(file);
-                    sprintf(result, "T%d",i);
-                    i++;
-                }
+    if(newNode == NULL){
+        fprintf(stderr, "Error: can not assing memory.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    newNode->instr = instr;
+
+    return newNode;
+}
+
+void addNodeToList(struct listNode *newNode){
+    struct listNode *aux = (struct listNode *)malloc(sizeof(struct listNode));
+    struct listNode *aux1 = (struct listNode *)malloc(sizeof(struct listNode));
+    if(instrListHead->next == NULL){
+        instrListHead->next = newNode;
+        newNode->next = NULL;
+    }else{
+        aux = instrListHead->next;
+        while(aux != NULL) {
+            aux1 = aux;
+            aux = aux->next;
+        }
+        if(aux == NULL){
+            aux1->next = newNode;
+            newNode->next = NULL;
         }
     }
-    return strdup(result);
-}
+    printList();
+} 
 
-void assigClass(struct tree *exprNode){
-    bool leftE = false; // para verificar si 
-    bool rightE = false;
-    char *t1;
-    char *t2;
-    if(exprNode == NULL){
+void printList(){
+    struct listNode *aux = (struct listNode *)malloc(sizeof(struct listNode));
+    if(instrListHead->next == NULL){
+        printf("EMPTY TABLE");
         return;
     }
-   
-    char *name = exprNode->left->info.name;
-    if(strcmp(exprNode->info.name, "ASSIG->EXPR") == 0){
-        if(strcmp(exprNode->right->info.name, "SUM") == 0){
-            struct tree *right = exprNode->right;
-            if(strcmp(right->right->info.type, "EXPR") == 0){
-                 t2 = exprClass(right->right);
-                 rightE = true;
-                 fflush(file);
-            }
-            if(strcmp(right->left->info.type, "EXPR") == 0){
-                 t1 = exprClass(right->left);
-                 leftE = true;
-                 fflush(file);
-            }
-            if(strcmp(right->left->info.type, "ID") == 0){
-                if(strcmp(right->right->info.type, "ID") == 0){
-                    char *nameLO = right->left->info.name;
-                    char *nameRO = right->right->info.name;
-                    if(leftE && rightE){
-                        fprintf(file, "T%d := %s + %s\n", i, t1, t2);
-                        fprintf(file, "%s := T%d\n", name, i);
-                        fflush(file);
-                    }else{
-                        fprintf(file, "T%d := %s + %s\n", i, nameLO, nameRO);
-                        fprintf(file, "%s := T%d\n", name, i);
-                        fflush(file);
-                    }
-                    i++;
-                }else{
-                    char *nameLO = right->left->info.name;
-                    int val = right->right->info.value;
-                    if(leftE){
-                        fprintf(file, "T%d := %s + %s\n", i, t1, val);
-                        fprintf(file, "%s := T%d\n", name, i);
-                        fflush(file);
-                    }else{
-                        fprintf(file, "T%d := %s + %d\n", i, nameLO, val);
-                        fprintf(file, "%s := T%d\n", name, i);
-                        fflush(file);
-                    }
-                    i++;
-                }
-            }else{
-                if(strcmp(right->right->info.type, "ID") == 0){
-                    char *nameRO = right->right->info.name;
-                    int val = right->left->info.value;
-                    if(rightE){
-                        fprintf(file, "T%d := %s + %s\n", i, val, t2);
-                        fprintf(file, "%s := T%d\n", name, i);
-                        fflush(file);
-                    }else{
-                        fprintf(file, "T%d := %d + %s\n", i, val, nameRO);
-                        fprintf(file, "%s := T%d\n", name, i);
-                        fflush(file);
-                    }
-                    i++;
-                    }else{
-                        int valR = right->right->info.value;
-                        int valL = right->left->info.value;
-                        if(rightE){
-                            fprintf(file, "T%d := %d + %s\n", i, valL, t2);
-                            fprintf(file, "%s := T%d\n", name, i);
-                            fflush(file);
-                        }else{
-                            if(leftE){
-                                fprintf(file, "T%d := %s + %d\n", i, t1, valR);
-                                fprintf(file, "%s := T%d\n", name, i);
-                                fflush(file);
-                            }else{
-                                fprintf(file, "T%d := %d + %d\n", i, valL, valR);
-                                fprintf(file, "%s := T%d\n", name, i);
-                                fflush(file);
-                            }
-                        }
-                        i++;
-                    }
-            }
-        }
-        if(strcmp(exprNode->right->info.name, "PROD") == 0){
-            struct tree *right = exprNode->right;
-            if(strcmp(right->left->info.type, "ID") == 0){
-                if(strcmp(right->right->info.type, "ID") == 0){
-                    char *nameLO = right->left->info.name;
-                    char *nameRO = right->right->info.name;
-                    fprintf(file, "T%d := %s * %s\n", i, nameLO, nameRO);
-                    fprintf(file, "%s := T%d\n", name, i);
-                    fflush(file);
-                    i++;
-                }else{
-                    char *nameLO = right->left->info.name;
-                    int val = right->right->info.value;
-                    fprintf(file, "T%d := %s * %d\n", i, nameLO, val);
-                    fprintf(file, "%s := T%d\n", name, i);
-                    fflush(file);
-                    i++;
-                }
-            }else{
-                if(strcmp(right->right->info.type, "ID") == 0){
-                    char *nameRO = right->right->info.name;
-                        int val = right->left->info.value;
-                        fprintf(file, "T%d := %d * %s\n", i, val, nameRO);
-                        fprintf(file, "%s := T%d\n", name, i);
-                        fflush(file);
-                        i++;
-                    }else{
-                        int valR = right->right->info.value;
-                        int valL = right->left->info.value;
-                        fprintf(file, "T%d := %d * %d\n", i, valL, valR);
-                        fprintf(file, "%s := T%d\n", name, i);
-                        fflush(file);
-                        i++;
-                    }
-            }
-        }
+    aux = instrListHead->next;
+    while(aux != NULL){
+        printf("List Node: %s\n", aux->instr);
+        aux = aux->next;
     }
+
+
 }
 
+void declClassNode(struct tree *declNode){
+    char *name = declNode->left->info.name;
+    int val = declNode->right->info.value;
+    char result[50];
+
+    sprintf(result, "T%d := %d\n", i, val);
+    struct listNode *node1 = newListNode(result);
+    printf("%s",node1->instr);
+    addNodeToList(node1);
+    sprintf(result, "%s := T%d\n", name, i);
+    struct listNode *node2 = newListNode(result);
+    printf("%s",node2->instr);
+    addNodeToList(node2);
+    i++;
+}
 
 
 void breadthFirstTraversal(struct tree *root){
-    file = fopen("intermediate_code_generated.txt", "w");
     if(root == NULL){
         return;
     }
@@ -205,15 +99,9 @@ void breadthFirstTraversal(struct tree *root){
 
     while(front != back) {
         struct tree *currentNode = queue[++front];
-        printf("TYPE: %s\n", currentNode->info.type);
         if(strcmp(currentNode->info.type, "DECL") == 0){
-            declClass(currentNode);
+            declClassNode(currentNode);
         }
-        if(strcmp(currentNode->info.type, "ASSIG") == 0){
-            assigClass(currentNode);
-        }
-        printNode(currentNode);
-
         if(currentNode->left != NULL){
             queue[++back] = currentNode->left;
         }
@@ -221,7 +109,6 @@ void breadthFirstTraversal(struct tree *root){
             queue[++back] = currentNode->right;
         }
     }
-
-    fclose(file);
 }
+
 
