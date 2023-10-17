@@ -51,7 +51,7 @@ void addNodeToList(struct listNode *newNode){
     }
     aux->next = newNode;
     newNode->next = NULL;
-    
+    printf("Se agrego: %s", newNode->instr); 
 }
 
 void printList(){
@@ -65,8 +65,8 @@ void printList(){
 void declClassNode(struct tree *declNode){
     char *name = declNode->left->info.name;
     int val = declNode->right->info.value;
+    printf("DECLARACION: %s\n",name);
    
-
     sprintf(result, "T%d := %d\n", i, val);
     struct listNode *instrDeclNode1 = newListNode(result);
     addNodeToList(instrDeclNode1);
@@ -77,53 +77,26 @@ void declClassNode(struct tree *declNode){
     i++;
 }
 
-char *exprClass(struct tree *exprNode){
-    char *name = exprNode->left->info.name;
-    struct listNode *instrExprNode;
-    char retStm[10];
-    char *op = exprNode->info.name;
+// char *exprClass(struct tree *exprNode){
+//     struct listNode *instrExprNode;
+//     char retStm[10];
+//     char *op = exprNode->info.name;
 
-    struct tree *right = exprNode;
-    if(strcmp(right->left->info.type, "ID") == 0){
-        if(strcmp(right->right->info.type, "ID") == 0){
-            char *nameLO = right->left->info.name;
-            char *nameRO = right->right->info.name;
-            sprintf(result,"T%d := %s %s %s\n", i, nameLO, op, nameRO);
-            instrExprNode = newListNode(result);
-            addNodeToList(instrExprNode);
-            sprintf(retStm,"T%d",i);  
-            i++;
-        }else{
-            char *nameLO = right->left->info.name;
-            int val = right->right->info.value;
-            sprintf(result,"T%d := %s %s %d\n", i, nameLO, op, val);
-            instrExprNode = newListNode(result);
-            addNodeToList(instrExprNode);
-            sprintf(retStm, "T%d",i);
-            i++;
-        }
-    }else{
-        if(strcmp(right->right->info.type, "ID") == 0){
-            char *nameRO = right->right->info.name;
-            int val = right->left->info.value;
-            sprintf(result, "T%d := %d %s %s\n", i, val, op, nameRO);
-            instrExprNode = newListNode(result);
-            addNodeToList(instrExprNode);
-            sprintf(retStm,"T%d",i);
-            i++;
-        }else{
-            int valR = right->right->info.value;
-            int valL = right->left->info.value;
-            sprintf(result, "T%d := %d %s %d\n", i, valL, op, valR);
-            instrExprNode = newListNode(result);
-            addNodeToList(instrExprNode);
-            sprintf(retStm, "T%d",i);
-            i++;
-        }
-    }
-    return strdup(retStm);
+//     char *tValorLeft;
+//     char *tValorRight;
 
-}
+//     if(strcmp(exprNode->left->info.type,"EXPR") == 0){
+//         tValorLeft = exprClass(exprNode->left);
+//     }
+//     if(strcmp(exprNode->right->info.type,"EXPR") == 0){
+//         tValorRight = exprClass(exprNode->right);
+//     }
+
+
+
+//     return strdup(retStm);
+
+// }
 
 void assigClass(struct tree *assigNode){
     char *tValorLeft;
@@ -159,7 +132,7 @@ void assigClass(struct tree *assigNode){
                     sprintf(result, "T%d := %s %s %s\n", i, tValorLeft, op, tValorRight);
                     instrAssigNode1 = newListNode(result);
                     addNodeToList(instrAssigNode1);
-                
+
                     sprintf(result, "%s := T%d\n", name, i);
                     instrAssigNode2 = newListNode(result);
                     addNodeToList(instrAssigNode2);     
@@ -167,7 +140,7 @@ void assigClass(struct tree *assigNode){
                     sprintf(result, "T%d := %s %s %s\n", i, nameLO, op, nameRO);
                     instrAssigNode1 = newListNode(result);
                     addNodeToList(instrAssigNode1);
-                
+
                     sprintf(result, "%s := T%d\n", name, i);
                     instrAssigNode2 = newListNode(result);
                     addNodeToList(instrAssigNode2);
@@ -250,21 +223,20 @@ void assigClass(struct tree *assigNode){
                 i++;
              }
         }
-        
+
     }
 
 }
-
 
 void breadthFirstTraversal(struct tree *root){
     if(root == NULL){
         return;
     }
     initialize_instrList();
+
     struct tree *queue[MAX_NODES];
     int front = -1;
     int back = -1;
-
     queue[++back] = root;
 
     while(front != back) {
@@ -272,6 +244,7 @@ void breadthFirstTraversal(struct tree *root){
         if(strcmp(currentNode->info.type, "DECL") == 0){
             declClassNode(currentNode);
         }
+
         if(strcmp(currentNode->info.type, "ASSIG") == 0){
             assigClass(currentNode);
         }
@@ -281,8 +254,43 @@ void breadthFirstTraversal(struct tree *root){
         if(currentNode->right != NULL){
             queue[++back] = currentNode->right;
         }
+    
     }
-    printList();
 }
+
+// void initializePath(struct tree *root){
+//     initialize_instrList();
+//     i = 1;
+
+//     inorderTraversal(root);
+
+// }
+
+// void inorderTraversal(struct tree *node) {
+//     if (node == NULL)
+//         return;
+
+//     if(node->left != NULL){
+//         printf("entro a left\n");
+//         inorderTraversal(node->left);
+//     }
+//     printf("es: %s\n",node->info.name);
+
+//     if(strcmp(node->info.name, "DECL->PROG") == 0){
+//             declClassNode(node);
+//     }
+//     if(strcmp(node->info.name, "ASSIG->PROG") == 0){
+//         assigClass(node);
+//     }
+
+//     if(node->right != NULL){
+//         printf("entro a right\n");
+//         inorderTraversal(node->right);
+//     }
+
+
+
+
+
 
 

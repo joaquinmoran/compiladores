@@ -13,12 +13,8 @@ struct tree *newTree(struct treeNode info, struct tree *leftChild, struct tree *
     if(root == NULL) {
         printf("Error: null pointer");
     }else {
-        if((leftChild != NULL) && (rightChild != NULL)){
-            root->left = leftChild;
-            root->right = rightChild;
-        } else {
-            printf("Null pointer error");
-        }
+        root->left = leftChild;
+        root->right = rightChild;
         root->info = info;
     }
     return root;
@@ -77,6 +73,17 @@ struct tree *newNode(char *t, char *n, int val){
 //     fclose(dotFile);
 // }
 
+void inOrderPrint(struct tree *tree){
+    if(tree == NULL){
+        return;
+    }
+    inOrderPrint(tree->left);
+
+    printf("Es: %s\n",tree->info.type);
+
+    inOrderPrint(tree->right);
+}
+
 
 void printNode(struct tree *tree){
     if(tree != NULL){
@@ -85,7 +92,7 @@ void printNode(struct tree *tree){
         printf("Name: %s\n", tree->info.name);
         printf("Value: %d\n", tree->info.value);
     }
-    printf("\n");
+    printf("SE MOSTRO LA RAIZ\n");
 
     if(tree->left != NULL){
         printf("Left child info: ");
@@ -93,7 +100,7 @@ void printNode(struct tree *tree){
         printf("Name: %s\n", tree->left->info.name);
         printf("Value: %d\n", tree->left->info.value);
     }
-    printf("\n");
+    printf("HIJO IZQUIERDO DE TAL RAIZ\n");
 
     if(tree->right != NULL){
         printf("Right child info: ");
@@ -101,4 +108,6 @@ void printNode(struct tree *tree){
         printf("Name: %s\n", tree->right->info.name);
         printf("Value: %d\n", tree->right->info.value);
     }
+    printf("HIJO DERECHA DE TAL RAIZ\n");
+
 }

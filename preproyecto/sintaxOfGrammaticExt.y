@@ -13,6 +13,8 @@ int error_flag = 0;
 
 struct node *head = NULL;
 
+extern struct tree *ast = NULL;
+
 
 __attribute__((constructor))
 void initialize_list() {
@@ -181,14 +183,14 @@ struct node *newTableNode(char *n, char *f, char *t, char *p, int v){
 
 
 prog:  decl ';'      {
-                        struct tree *declTree = $1;
-                        //breadthFirstTraversal(declTree);
+                        struct tree *declTree = $1;//newTree(newNode("DECL ; EMPTY ", "SIMPLE", -1)->info, $1, NULL);
+                        ast = declTree;
                         $$ = declTree;
                     }
 
     | assig ';'     {
                         struct tree *assigTree = $1;
-                        // breadthFirstTraversal(assigTree);
+                        ast = assigTree;
                         $$ = assigTree;
                      }
 
@@ -200,10 +202,9 @@ prog:  decl ';'      {
                             if(lc == NULL && rc == NULL) {
                                 printf("NULL POINTER ERROR \n");
                             }else {
-                                declProgTree = newTree( newNode("PROG", "DECL->PROG",-1)->info, lc,rc);
+                                declProgTree = newTree( newNode("DECL ; PROG", "DECL->PROG",-1)->info, lc,rc);
                             }
-                            //saveDotFile(declProgTree);
-                            breadthFirstTraversal(declProgTree);
+                            ast = declProgTree;
                             $$ = declProgTree;
                         }
 
@@ -214,8 +215,9 @@ prog:  decl ';'      {
                         if(lc == NULL && rc == NULL) {
                             printf("NULL POINTER ERROR \n");
                         }else {
-                            assigProgTree = newTree( newNode("PROG", "ASSIG->PROG",-1)->info, lc,rc);
+                            assigProgTree = newTree( newNode("ASSIG ; PROG", "ASSIG->PROG",-1)->info, lc,rc);
                         }
+                        ast = assigProgTree;
                         $$ = assigProgTree;
                      }
     | ret ';'       {
@@ -249,7 +251,7 @@ prog:  decl ';'      {
                         if(lc == NULL && rc == NULL){
                             printf("NULL POINTER ERROR");
                         } else {
-                            retAssigTree = newTree(newNode("PROG", "RET->PROG",-1)->info, lc, rc);
+                            retAssigTree = newTree(newNode("RET ; PROG", "RET->PROG",-1)->info, lc, rc);
                             
                         }
                         if(retAssigTree != NULL){

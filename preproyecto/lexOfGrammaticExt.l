@@ -4,6 +4,9 @@
 #include <stdio.h>
 
 #include "sintaxOfGrammaticExt.tab.h"
+#include "ast.h"
+#include "interCodeGen.h"
+
 %}
 
 %option noyywrap
@@ -65,5 +68,16 @@ int main(int argc,char *argv[]){
 		yyin = stdin;
 
 	yyparse();
+
+    if(ast != NULL){
+        //printNode(ast);
+        breadthFirstTraversal(ast);
+
+    }else{
+        fprintf(stderr, "Error: el árbol está vacío o no se generó correctamente.\n");
+        return 1;
+    }
+
+    return 0;
 
 }

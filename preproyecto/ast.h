@@ -14,8 +14,10 @@ struct tree{
     struct treeNode info;
 };
 
+extern struct tree *ast;
+
 struct tree *newTree(struct treeNode info, struct tree *leftChild, struct tree *rightChild);
 struct tree *newNode(char *type, char *name, int value);
-void printNode(struct tree *tree);
+void inOrderPrint(struct tree *root);
 
 #endif
