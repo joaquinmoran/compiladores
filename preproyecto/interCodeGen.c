@@ -21,7 +21,7 @@ void initialize_instrList() {
             exit(EXIT_FAILURE);
         }
         instrListHead->next = NULL;
-        listInitialized = true
+        listInitialized = true;
     }
 }
 struct listNode *newListNode(struct treeNode *left,struct treeNode *right, struct treeNode *info,char *instr){
@@ -34,7 +34,7 @@ struct listNode *newListNode(struct treeNode *left,struct treeNode *right, struc
 
     newNode->left = left;
     newNode->right = right;
-    newNode->info = info;
+    newNode->result = info;
     
 
     newNode->instr = malloc(strlen(instr) + 1); // Asignar memoria para la cadena
@@ -56,6 +56,23 @@ void addNodeToList(struct listNode *newNode){
     newNode->next = NULL;
     printf("Se agrego: %s", newNode->instr); 
 }
+
+
+
+void declClass ( struct tree *declNode){
+    struct listNode *newNode;
+    if (strcmp(declNode->right->info.type, "expr")!=0){
+        struct treeNode *exprNode;
+        exprNode = exprClass(declNode->right);
+        newNode=newListNode(declNode->left, exprNode,NULL, "DECL");
+        addNodeToList(newNode);
+    } else {
+        newListNode(declNode->left, declNode->right,NULL, "DECL");
+        addNodeToList(newNode);
+    }
+};
+
+
 
 void printList(){
     struct listNode *currentNode = instrListHead->next; // Ignora el primer nodo que es el nodo de inicialización
