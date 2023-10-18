@@ -34,7 +34,7 @@ struct listNode *newListNode(struct treeNode *left,struct treeNode *right, struc
 
     newNode->left = left;
     newNode->right = right;
-    newNode->info = info;
+    newNode->result = info;
     
     newNode->instr = malloc(strlen(instr) + 1); // Asignar memoria para la cadena
     if(newNode->instr == NULL){
@@ -56,6 +56,22 @@ void addNodeToList(struct listNode *newNode){
     printf("Se agrego: %s", newNode->instr); 
 }
 
+
+
+
+void declClass ( struct tree *declNode){
+    struct listNode *newNode;
+    if (strcmp(declNode->right->info.type, "expr")!=0){
+        struct treeNode *exprNode;
+        exprNode = exprClass(declNode->right);
+        newNode=newListNode(declNode->left, exprNode,NULL, "DECL");
+        addNodeToList(newNode);
+    } else {
+        newListNode(declNode->left, declNode->right,NULL, "DECL");
+        addNodeToList(newNode);
+    }
+};
+
 struct treeNode *exprClass(struct tree *exprNode){
     struct treeNode *leftChild;
     struct treeNode *rightChild;
@@ -72,6 +88,7 @@ struct treeNode *exprClass(struct tree *exprNode){
     }
     if(rightChild == NULL){
         rightChild = exprNode->right->info;
+
     }
     
     struct listNode *instr = newListNode(leftChild,rightChild, exprNode->info, exprNode->info.name);
