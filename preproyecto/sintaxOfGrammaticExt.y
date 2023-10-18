@@ -229,7 +229,7 @@ prog:  decl ';'      {
                                 printf("False\n");
                             }
                         }else {
-                            return("Result: %d\n", retTree->info.value);
+                            printf("Result: %d\n", retTree->info.value);
                         }
                         $$ = retTree;
                     }

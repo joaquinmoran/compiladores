@@ -36,7 +36,6 @@ struct listNode *newListNode(struct treeNode *left,struct treeNode *right, struc
     newNode->right = right;
     newNode->result = info;
     
-
     newNode->instr = malloc(strlen(instr) + 1); // Asignar memoria para la cadena
     if(newNode->instr == NULL){
         fprintf(stderr, "Error: can not assing memory.\n");
@@ -59,6 +58,7 @@ void addNodeToList(struct listNode *newNode){
 
 
 
+
 void declClass ( struct tree *declNode){
     struct listNode *newNode;
     if (strcmp(declNode->right->info.type, "expr")!=0){
@@ -72,14 +72,36 @@ void declClass ( struct tree *declNode){
     }
 };
 
-
-
-void printList(){
-    struct listNode *currentNode = instrListHead->next; // Ignora el primer nodo que es el nodo de inicialización
-    while(currentNode != NULL){
-        printf("List Node: %s\n", currentNode->instr);
-        currentNode = currentNode->next; // Avanza al siguiente nodo
+struct treeNode *exprClass(struct tree *exprNode){
+    struct treeNode *leftChild;
+    struct treeNode *rightChild;
+    if(strcmp(exprNode->left->info.type,"EXPR") == 0){
+        leftChild = exprClass(exprNode->left);
+    }else{
+        if(strcmp(exprNode->left->info.type, "EXPR") == 0){
+            rightChild = exprClass(exprNode->right);
+        }
     }
+
+    if(leftChild == NULL){
+        leftChild = exprNode->left->info;
+    }
+    if(rightChild == NULL){
+        rightChild = exprNode->right->info;
+
+    }
+    
+    struct listNode *instr = newListNode(leftChild,rightChild, exprNode->info, exprNode->info.name);
+    addNodeToList(instr);
+    return isntr->result;
+
+}
+
+
+void assigClass(struct tree *assigNode){
+    struct treeNode *leftChild = assigNode->left->info;
+    struct treeNode *rightChild = exprClass(assigNode->right);
+    struct listNode *instr = newListNode(leftChild, rightChild, NULL, assigNode->info.type);
 }
 
 
