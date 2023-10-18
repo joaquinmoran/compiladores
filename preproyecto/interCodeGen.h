@@ -6,7 +6,7 @@
 struct listNode{
     struct treeNode *left;
     struct treeNode *right;
-    struct treeNode *info;
+    struct treeNode *result;
     struct listNode *next;
     char *instr;
 };
