@@ -72,7 +72,7 @@ int main(int argc,char *argv[]){
     if(ast != NULL){
         //printNode(ast);
         breadthFirstTraversal(ast);
-
+       
     }else{
         fprintf(stderr, "Error: el árbol está vacío o no se generó correctamente.\n");
         return 1;
