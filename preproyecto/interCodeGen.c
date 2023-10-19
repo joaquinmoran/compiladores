@@ -54,7 +54,7 @@ void addNodeToList(struct listNode *newNode){
     }
     aux->next = newNode;
     newNode->next = NULL;
-    printf("%s\n", newNode->instr);
+    printf("%s\n", newNode->instr); 
 }
 
 struct treeNode exprClass(struct tree *exprNode){
