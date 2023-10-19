@@ -4,9 +4,9 @@
 #include "ast.h"
 
 struct listNode{
-    struct treeNode *left;
-    struct treeNode *right;
-    struct treeNode *result;
+    struct treeNode left;
+    struct treeNode right;
+    struct treeNode result;
     struct listNode *next;
     char *instr;
 };

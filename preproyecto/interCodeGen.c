@@ -9,6 +9,7 @@
 int MAX_NODES = 100;
 struct listNode *instrListHead = NULL;
 bool listInitialized = false;
+struct treeNode nullNode = {NULL,NULL,-1}; // porque al poner solo NULL no lo acepta
 
 
 
@@ -24,7 +25,7 @@ void initialize_instrList() {
         listInitialized = true;
     }
 }
-struct listNode *newListNode(struct treeNode *left,struct treeNode *right, struct treeNode *info,char *instr){
+struct listNode *newListNode(struct treeNode left,struct treeNode right, struct treeNode info,char *instr){
     struct listNode *newNode = (struct listNode *)malloc(sizeof(struct listNode));
 
     if(newNode == NULL){
@@ -53,60 +54,62 @@ void addNodeToList(struct listNode *newNode){
     }
     aux->next = newNode;
     newNode->next = NULL;
-    printf("Se agrego: %s", newNode->instr); 
+    printf("%s\n", newNode->instr); 
 }
 
+struct treeNode exprClass(struct tree *exprNode){
 
-
-
-void declClass ( struct tree *declNode){
-    struct listNode *newNode;
-    if (strcmp(declNode->right->info.type, "expr")!=0){
-        struct treeNode *exprNode;
-        exprNode = exprClass(declNode->right);
-        newNode=newListNode(declNode->left, exprNode,NULL, "DECL");
-        addNodeToList(newNode);
-    } else {
-        newListNode(declNode->left, declNode->right,NULL, "DECL");
-        addNodeToList(newNode);
+    if(exprNode == NULL){
+        return;
     }
-};
 
-struct treeNode *exprClass(struct tree *exprNode){
-    struct treeNode *leftChild;
-    struct treeNode *rightChild;
-    if(strcmp(exprNode->left->info.type,"EXPR") == 0){
-        leftChild = exprClass(exprNode->left);
-    }else{
-        if(strcmp(exprNode->left->info.type, "EXPR") == 0){
+    struct treeNode leftChild = {NULL, NULL, -1};
+    struct treeNode rightChild = {NULL, NULL, -1};
+    if(exprNode->left != NULL && strcmp(exprNode->left->info.type,"EXPR") == 0){
+            leftChild = exprClass(exprNode->left);
+        
+    }
+    if(exprNode->right != NULL && strcmp(exprNode->left->info.type, "EXPR") == 0){
             rightChild = exprClass(exprNode->right);
+    }
+
+
+    if(leftChild.type == NULL && leftChild.name == NULL && leftChild.value == -1){
+        if(exprNode->left != NULL){
+            leftChild = exprNode->left->info;
         }
     }
-
-    if(leftChild == NULL){
-        leftChild = exprNode->left->info;
-    }
-    if(rightChild == NULL){
-        rightChild = exprNode->right->info;
-
+    if(rightChild.type == NULL && rightChild.name == NULL && rightChild.value == -1){
+        if(exprNode->right != NULL){
+            rightChild = exprNode->right->info;
+        }
     }
     
     struct listNode *instr = newListNode(leftChild,rightChild, exprNode->info, exprNode->info.name);
     addNodeToList(instr);
-    return isntr->result;
+    return instr->result;
 
+}
+
+void declClass(struct tree *declNode){
+    struct listNode *newNode;
+
+    newNode = newListNode(declNode->left->info, declNode->right->info, nullNode, declNode->info.type);
+    addNodeToList(newNode);
 }
 
 
 void assigClass(struct tree *assigNode){
-    struct treeNode *leftChild = assigNode->left->info;
-    struct treeNode *rightChild = exprClass(assigNode->right);
-    struct listNode *instr = newListNode(leftChild, rightChild, NULL, assigNode->info.type);
+    struct treeNode leftChild = assigNode->left->info;
+    struct treeNode rightChild = exprClass(assigNode->right);
+    struct listNode *instr = newListNode(leftChild, rightChild, nullNode, assigNode->info.type);
+    addNodeToList(instr);
 }
 
 
 
 void breadthFirstTraversal(struct tree *root){
+
     if(root == NULL){
         return;
     }
@@ -120,7 +123,7 @@ void breadthFirstTraversal(struct tree *root){
     while(front != back) {
         struct tree *currentNode = queue[++front];
         if(strcmp(currentNode->info.type, "DECL") == 0){
-            declClassNode(currentNode);
+            declClass(currentNode);
         }
 
         if(strcmp(currentNode->info.type, "ASSIG") == 0){
@@ -135,9 +138,3 @@ void breadthFirstTraversal(struct tree *root){
     
     }
 }
-
-
-
-
-
-
