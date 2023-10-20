@@ -54,7 +54,8 @@ void addNodeToList(struct listNode *newNode){
     }
     aux->next = newNode;
     newNode->next = NULL;
-    printf("%s\n", newNode->instr);
+    printf("%s\n",newNode->instr);
+
 }
 
 struct treeNode exprClass(struct tree *exprNode){
@@ -83,11 +84,17 @@ struct treeNode exprClass(struct tree *exprNode){
         if(exprNode->right != NULL){
             rightChild = exprNode->right->info;
         }
-    }
     
-    struct listNode *instr = newListNode(leftChild,rightChild, exprNode->info, exprNode->info.name);
-    addNodeToList(instr);
-    return instr->result;
+    }
+
+    if(strcmp(exprNode->info.name,"IVALUE") != 0){
+        if(strcmp(exprNode->info.type, "ID") != 0){
+            struct listNode *instr = newListNode(leftChild,rightChild, exprNode->info, exprNode->info.name);
+            addNodeToList(instr);
+            return instr->result;
+        }
+    }
+   
 
 }
 
@@ -103,6 +110,12 @@ void assigClass(struct tree *assigNode){
     struct treeNode leftChild = assigNode->left->info;
     struct treeNode rightChild = exprClass(assigNode->right);
     struct listNode *instr = newListNode(leftChild, rightChild, nullNode, assigNode->info.type);
+    addNodeToList(instr);
+}
+
+void retClass(struct tree *retNode){
+    struct treeNode leftChild = exprClass(retNode->left);
+    struct listNode *instr = newListNode(leftChild, nullNode, nullNode, retNode->info.name);
     addNodeToList(instr);
 }
 
@@ -128,6 +141,9 @@ void breadthFirstTraversal(struct tree *root){
 
         if(strcmp(currentNode->info.type, "ASSIG") == 0){
             assigClass(currentNode);
+        }
+        if(strcmp(currentNode->info.name,"RETURN") == 0){
+            retClass(currentNode);
         }
         if(currentNode->left != NULL){
             queue[++back] = currentNode->left;

@@ -231,6 +231,7 @@ prog:  decl ';'      {
                         }else {
                             printf("Result: %d\n", retTree->info.value);
                         }
+                        ast = retTree;
                         $$ = retTree;
                     }
 
@@ -259,7 +260,7 @@ prog:  decl ';'      {
                         }else {
                             printf("NULL POINTER ERROR");
                         }
-                        
+                        ast = retAssigTree;
                      }
 
     ;
@@ -398,13 +399,14 @@ IVALOR: INT         {
      ;
 
 
-ret: RETURN expr   {   
-                        struct node *node = getNodeByName($2->info.name);
+ret: RETURN expr   {    
+                        struct tree *lc = $2;
+                        struct node *node = getNodeByName(lc->info.name);
                         struct tree *retTree;
                         if(strcmp(node->info.type, "BOOLEAN")==0){
-                           retTree = newNode("BOOLEAN", "RETUN-EXPR", $2->info.value);   
+                           retTree = newTree(newNode("BOOLEAN", "RETURN", lc->info.value)->info, lc, NULL);   
                         }else {
-                            retTree = newNode("INTEGER", "RETUN-EXPR", $2->info.value);   
+                            retTree = newTree(newNode("INTEGER", "RETURN", $2->info.value)->info, lc, NULL);   
                         }
 
                         if(retTree != NULL){
