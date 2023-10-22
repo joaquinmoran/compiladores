@@ -261,6 +261,7 @@ prog:  decl ';'      {
                             printf("NULL POINTER ERROR");
                         }
                         ast = retAssigTree;
+                        $$ = retAssigTree;
                      }
 
     ;
