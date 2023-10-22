@@ -93,13 +93,11 @@ struct treeNode exprClass(struct tree *exprNode){
             return instr->result;
         }
     }
-   
 
 }
 
 void declClass(struct tree *declNode){
     struct listNode *newNode;
-
     newNode = newListNode(declNode->left->info, declNode->right->info, nullNode, declNode->info.type);
     addNodeToList(newNode);
 }
@@ -113,11 +111,40 @@ void assigClass(struct tree *assigNode){
 }
 
 void retClass(struct tree *retNode){
-    struct treeNode leftChild = exprClass(retNode->left);
-    struct listNode *instr = newListNode(leftChild, nullNode, nullNode, retNode->info.name);
-    addNodeToList(instr);
+    if(strcmp(retNode->left->info.type,"ID") == 0 || strcmp(retNode->info.name,"IVALUE") == 0){
+        struct listNode *instr = newListNode(retNode->left->info, nullNode, nullNode, retNode->info.name);
+        addNodeToList(instr);
+    }else{
+        struct treeNode leftChild = exprClass(retNode->left);
+        printf("RETURN LEFT IS: %d\n",leftChild.value);
+        struct listNode *instr = newListNode(leftChild, nullNode, nullNode, retNode->info.name);
+        addNodeToList(instr);
+    }
 }
 
+void printListOfInstr(){
+    struct listNode *currentNode = instrListHead;
+
+    while(currentNode != NULL){
+        printf("Instruction is: %s\n", currentNode->instr);
+        if(currentNode->left.type != NULL && currentNode->left.name != NULL && currentNode->left.value != -999 ){
+            printf("Left is: %s\n", currentNode->left.type);
+            printf("Left is: %s\n", currentNode->left.name);
+            printf("Left is: %d\n", currentNode->left.value);
+        }
+        if(currentNode->right.type != NULL && currentNode->right.name != NULL && currentNode->right.value != -999){
+            printf("Right is: %s\n", currentNode->right.type);
+            printf("Right is: %s\n", currentNode->right.name);
+            printf("Right is: %d\n", currentNode->right.value);
+        }
+        if(currentNode->result.type != NULL && currentNode->result.name != NULL && currentNode->result.value != -999){
+            printf("Result is: %s\n", currentNode->result.type);
+            printf("Result is: %s\n", currentNode->result.name);
+            printf("Result is: %d\n", currentNode->result.value);
+        }
+        currentNode = currentNode->next;    
+    }
+}
 
 
 void breadthFirstTraversal(struct tree *root){
@@ -150,6 +177,6 @@ void breadthFirstTraversal(struct tree *root){
         if(currentNode->right != NULL){
             queue[++back] = currentNode->right;
         }
-    
     }
+    printListOfInstr();
 }
