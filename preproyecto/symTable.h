@@ -8,6 +8,7 @@ struct nodeInfo{
     char *type;
     char *param;
     int value;
+    int offset;
 };
 
 struct node{

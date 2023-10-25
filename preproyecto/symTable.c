@@ -6,6 +6,7 @@
 #include "symTable.h"
 
 int error_flag = 0;
+int offset = -8;
 
 struct node *head = NULL;
 
@@ -57,10 +58,10 @@ void printTable(){
     }
     aux = head->next;
     while(aux != NULL){
-        printf("Table symbol: %s = %s = %d \n", aux->info.type, aux->info.name, aux->info.value);
+        printf("Table symbol: %s %s == %d \n", aux->info.type, aux->info.name, aux->info.value);
         aux = aux->next;
     }
-
+    
 
 }
 
@@ -123,6 +124,11 @@ struct node *getNodeByName(char *name){
     return NULL; 
 }
 
+int getOffsetByName(char *name){
+    struct node *node = getNodeByName(name);
+    return node->info.offset;
+} 
+
 struct node *newTableNode(char *n, char *f, char *t, char *p, int v){
     struct node *sym = (struct node *)malloc(sizeof(struct node));
 
@@ -136,6 +142,8 @@ struct node *newTableNode(char *n, char *f, char *t, char *p, int v){
     sym->info.type = t;
     sym->info.param = p;
     sym->info.value = v;
+    sym->info.offset = offset;
+    offset = offset - 8;
 
     return sym;
 }
