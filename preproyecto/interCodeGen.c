@@ -10,7 +10,8 @@ int MAX_NODES = 100;
 struct listNode *instrListHead = NULL;
 bool listInitialized = false;
 struct treeNode nullNode = {NULL,NULL,-1}; // porque al poner solo NULL no lo acepta
-
+int n = 1;
+char res[10];
 
 
 __attribute__((constructor))
@@ -66,11 +67,18 @@ struct treeNode exprClass(struct tree *exprNode){
     struct treeNode leftChild = {NULL, NULL, -1};
     struct treeNode rightChild = {NULL, NULL, -1};
     if(exprNode->left != NULL && strcmp(exprNode->left->info.type,"EXPR") == 0){
-            leftChild = exprClass(exprNode->left);
         
+        leftChild = exprClass(exprNode->left);
+        sprintf(res, "T%d", n);
+        struct node *newTemp = newTableNode("E", "TEMP", leftChild.type, NULL, leftChild.value);
+        addNodeToTable(newTemp);
     }
     if(exprNode->right != NULL && strcmp(exprNode->left->info.type, "EXPR") == 0){
-            rightChild = exprClass(exprNode->right);
+        
+        rightChild = exprClass(exprNode->right);
+        sprintf(res, "T%d", n);
+        struct node *newTemp = newTableNode("R", "TEMP", rightChild.type, NULL, rightChild.value);
+        addNodeToTable(newTemp);
     }
 
 
@@ -102,14 +110,22 @@ void declClass(struct tree *declNode){
     addNodeToList(newNode);
 }
 
-
 void assigClass(struct tree *assigNode){
     struct treeNode leftChild = assigNode->left->info;
-    struct treeNode rightChild = exprClass(assigNode->right);
-    struct listNode *instr = newListNode(leftChild, rightChild, nullNode, assigNode->info.type);
-    addNodeToList(instr);
+    if(strcmp(assigNode->right->info.type,"ID") == 0 || strcmp(assigNode->right->info.name,"IVALUE") == 0){
+        struct listNode *instr = newListNode(leftChild, assigNode->right->info, nullNode, assigNode->info.type);
+        addNodeToList(instr);
+    }else{
+        struct treeNode rightChild = exprClass(assigNode->right);
+        sprintf(res, "T%d", n);
+        struct node *newTemp = newTableNode("T", "TEMP", rightChild.type, NULL, rightChild.value);
+        addNodeToTable(newTemp);
+        n++;
+        struct listNode *instr = newListNode(leftChild, rightChild, nullNode, assigNode->info.type);
+        addNodeToList(instr);
+    }     
 }
-
+        
 void retClass(struct tree *retNode){
     if(strcmp(retNode->left->info.type,"ID") == 0 || strcmp(retNode->info.name,"IVALUE") == 0){
         struct listNode *instr = newListNode(retNode->left->info, nullNode, nullNode, retNode->info.name);
