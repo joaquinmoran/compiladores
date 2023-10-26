@@ -27,8 +27,21 @@ void listTraverse(){
     fprintf(assemblyFile, "    subq	    $24, %rsp\n");
     fflush(assemblyFile);
     while(currentNode->next != NULL){
-        printf("%s\n", currentNode->next->instr);
         currentNode = currentNode->next;
+        if(strcmp(currentNode->instr,"DECL") == 0){
+            struct node *node = getNodeByName(currentNode->left.name);
+            fprintf(assemblyFile, "    movq    $%d, %d(%rbp)\n", currentNode->right.value ,node->info.offset);
+            fprintf(assemblyFile, "    movq    %d(%rbp), %rax\n", node->info.offset);
+            fflush(assemblyFile);
+        }
     }
+    fprintf(assemblyFile," \n");
+    fprintf(assemblyFile, "    popq	   %rbp\n");
+    fprintf(assemblyFile," \n");
+    fprintf(assemblyFile, "    ret\n");
+    fprintf(assemblyFile," \n");
+    fprintf(assemblyFile, "    .size	main, .-main\n");
+    fprintf(assemblyFile, "    .section	.note.GNU-stack,"",@progbits\n");
+    fflush(assemblyFile);
 
 }
