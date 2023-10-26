@@ -6,6 +6,7 @@
 #include "sintaxOfGrammaticExt.tab.h"
 #include "ast.h"
 #include "interCodeGen.h"
+#include "assemblyGen.h"
 
 %}
 
@@ -77,6 +78,7 @@ int main(int argc,char *argv[]){
         fprintf(stderr, "Error: el árbol está vacío o no se generó correctamente.\n");
         return 1;
     }
+    listTraverse();
 
     return 0;
 

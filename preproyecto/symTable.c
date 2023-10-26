@@ -31,9 +31,11 @@ void addNodeToTable(struct node *newNode){
         newNode->next = NULL;        
     }else{
         aux = head->next;
+        printf("EL NAME DE NEW NODE ES: %s\n",newNode->info.name);
         while(aux != NULL) {
             if(strcmp(aux->info.name, newNode->info.name) == 0){
                 printf("Redeclared variable. \n");
+                printf("EL NAME DE LO QUE ESTA EN LA LISTA ES: %s\n", aux->info.name);
                 error_flag = 1;
                 break;
             }
@@ -137,10 +139,22 @@ struct node *newTableNode(char *n, char *f, char *t, char *p, int v){
         exit(EXIT_FAILURE);
     }
 
-    sym->info.name = n;
-    sym->info.flag = f;
-    sym->info.type = t;
-    sym->info.param = p;
+    sym->info.name = malloc(strlen(n) + 1);
+    sym->info.flag = malloc(strlen(f) + 1);
+    sym->info.type = malloc(strlen(t) + 1);
+    if(sym->info.name == NULL || sym->info.flag == NULL ||
+        sym->info.type == NULL){
+            fprintf(stderr, "Error: can not assing memory.\n");
+            exit(EXIT_FAILURE);
+    }
+    strcpy(sym->info.name, n);
+    strcpy(sym->info.flag, f);
+    strcpy(sym->info.type, t);
+    
+    if(p != NULL){
+        sym->info.param = malloc(strlen(p) + 1);
+        strcpy(sym->info.param, p);
+    }
     sym->info.value = v;
     sym->info.offset = offset;
     offset = offset - 8;
