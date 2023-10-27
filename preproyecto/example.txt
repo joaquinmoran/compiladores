@@ -1,7 +1,0 @@
-int x := 5;
-int y := 3;
-y := y * 2; 
-x := (x + x) * x;
-y := y * (x + y);
-return y;
-
