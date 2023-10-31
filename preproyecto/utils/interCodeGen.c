@@ -98,6 +98,7 @@ struct treeNode exprClass(struct tree *exprNode){
         }
     }
 
+
 }
 
 void declClass(struct tree *declNode){
@@ -189,5 +190,5 @@ void breadthFirstTraversal(struct tree *root){
             queue[++back] = currentNode->right;
         }
     }
-    //printListOfInstr();
+    printListOfInstr();
 }
