@@ -166,7 +166,9 @@ expr: IVALOR            {
                         struct tree *genTree;
                         struct tree *lc = $1;
                         struct tree *rc = $3; 
-                        genTree = newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
+                        int valL = getValueByName(lc->info.name);
+                        int valR = getValueByName(rc->info.name);
+                        genTree = newTree( newNode("EXPR", "PROD", (valL * valR))->info, lc, rc);
                         if(genTree == NULL){
                             printf("NULL POINTER ERROR \n");
                         }else {
@@ -222,12 +224,12 @@ assig: VAR TEQ expr     {
                                 printf("NULL POINTER ERROR \n");
                             }else {
                                 genTree = newTree( newNode("ASSIG", "ASSIG->EXPR", rc->info.value)->info, lc, rc);
-                                bool var = setValueByName(rc->info.value, lc->info.name);
-                                if(var != true){
-                                    printf("ERROR(undeclared variable in line %d).\n", yylineno);
-                                    printf("Aborting compilation...\n");
-                                    exit(EXIT_FAILURE);
-                                }
+                                // bool var = setValueByName(rc->info.value, lc->info.name);
+                                // if(var != true){
+                                //     printf("ERROR(undeclared variable in line %d).\n", yylineno);
+                                //     printf("Aborting compilation...\n");
+                                //     exit(EXIT_FAILURE);
+                                // }
                             }
                             if(genTree == NULL){
                                 printf("NULL POINTER ERROR \n");

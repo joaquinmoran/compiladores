@@ -31,11 +31,9 @@ void addNodeToTable(struct node *newNode){
         newNode->next = NULL;        
     }else{
         aux = head->next;
-        printf("EL NAME DE NEW NODE ES: %s\n",newNode->info.name);
         while(aux != NULL) {
             if(strcmp(aux->info.name, newNode->info.name) == 0){
                 printf("Redeclared variable. \n");
-                printf("EL NAME DE LO QUE ESTA EN LA LISTA ES: %s\n", aux->info.name);
                 error_flag = 1;
                 break;
             }
@@ -48,7 +46,7 @@ void addNodeToTable(struct node *newNode){
             aux = newNode;
         }
     }
-    printTable();
+    //printTable();
     
 }
 
@@ -105,6 +103,7 @@ int getValueByName(char *name){
         }
     }
     error_flag = 1;
+    printf("No encontre el nombre");
     return -9999; 
 }
 

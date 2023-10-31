@@ -11,12 +11,13 @@ extern struct listNode *instrListHead;
 FILE *assemblyFile;
 int tempN = 0;
 char temp[10];
+int lastTemp;
 
 void tempMeth(){
     sprintf(temp, "T%d", tempN);
     struct node *tempNode = getNodeByName(temp);
-    if(tempNode == NULL) {printf("NULL \n");}
-    fprintf(assemblyFile, "    movq   %%eax, %d(%%rbp)\n", tempNode->info.offset);
+    fprintf(assemblyFile, "    movq    %%eax, %d(%%rbp)\n", tempNode->info.offset);
+    lastTemp = tempN;
     tempN++;
 }
 
@@ -259,7 +260,21 @@ void listTraverse(){
                 }
             }
         }
+
+        if(strcmp(currentNode->instr,"ASSIG") == 0){
+            struct node *leftNode = getNodeByName(currentNode->left.name);
+            sprintf(temp, "T%d", lastTemp);
+            struct node *tempNode = getNodeByName(temp);
+            fprintf(assemblyFile, "    movq    %d(%%rbp), %%eax\n", tempNode->info.offset);
+            fprintf(assemblyFile, "    movq    %%eax, %d(%%rbp)\n", leftNode->info.offset);
+            fflush(assemblyFile);
+            bool modified = setValueByName(tempNode->info.value, leftNode->info.name);
+            printTable();
+        }  
+
+
     }
+    //printTable();
     fprintf(assemblyFile," \n");
     fprintf(assemblyFile, "    popq	   %%rbp\n");
     fprintf(assemblyFile," \n");
@@ -269,4 +284,5 @@ void listTraverse(){
     fprintf(assemblyFile, "    .section	.note.GNU-stack,"",@progbits\n");
     fflush(assemblyFile);
     fclose(assemblyFile);
+
 }
