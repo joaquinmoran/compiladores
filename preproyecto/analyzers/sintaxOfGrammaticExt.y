@@ -224,12 +224,12 @@ assig: VAR TEQ expr     {
                                 printf("NULL POINTER ERROR \n");
                             }else {
                                 genTree = newTree( newNode("ASSIG", "ASSIG->EXPR", rc->info.value)->info, lc, rc);
-                                // bool var = setValueByName(rc->info.value, lc->info.name);
-                                // if(var != true){
-                                //     printf("ERROR(undeclared variable in line %d).\n", yylineno);
-                                //     printf("Aborting compilation...\n");
-                                //     exit(EXIT_FAILURE);
-                                // }
+                                bool var = setValueByName(rc->info.value, lc->info.name);
+                                if(var != true){
+                                    printf("ERROR(undeclared variable in line %d).\n", yylineno);
+                                    printf("Aborting compilation...\n");
+                                    exit(EXIT_FAILURE);
+                                }
                             }
                             if(genTree == NULL){
                                 printf("NULL POINTER ERROR \n");
@@ -269,19 +269,19 @@ IVALOR: INT         {
 
 ret: RETURN expr   {    
                         struct tree *lc = $2;
-                        struct node *node = getNodeByName(lc->info.name);
                         struct tree *retTree;
-                        if(strcmp(node->info.type, "BOOLEAN")==0){
-                           retTree = newTree(newNode("BOOLEAN", "RETURN", lc->info.value)->info, lc, NULL);   
-                        }else {
-                            retTree = newTree(newNode("INTEGER", "RETURN", $2->info.value)->info, lc, NULL);   
+                        if(strcmp(lc->info.type,"EXPR") == 0){
+                            retTree = newTree(newNode("EXPR", "RETURN", lc->info.value)->info, lc, NULL);
+                        }else{
+                            struct node *node = getNodeByName(lc->info.name);
+                            if(strcmp(node->info.type, "BOOLEAN")==0){
+                                retTree = newTree(newNode("BOOLEAN", "RETURN", lc->info.value)->info, lc, NULL);   
+                            }else {
+                                retTree = newTree(newNode("INTEGER", "RETURN", lc->info.value)->info, lc, NULL);   
+                            }
                         }
-
-                        if(retTree != NULL){
-                            $$ = retTree;
-                        }else {
-                            printf("NULL RETURN");
-                        }
+                        $$ = retTree;
+                        
                     }
 
     ;

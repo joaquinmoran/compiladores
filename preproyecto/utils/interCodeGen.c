@@ -54,7 +54,6 @@ void addNodeToList(struct listNode *newNode){
     }
     aux->next = newNode;
     newNode->next = NULL;
-    printf("%s\n", newNode->instr); 
 }
 
 struct treeNode exprClass(struct tree *exprNode){
@@ -128,7 +127,9 @@ void retClass(struct tree *retNode){
         addNodeToList(instr);
     }else{
         struct treeNode leftChild = exprClass(retNode->left);
-        printf("RETURN LEFT IS: %d\n",leftChild.value);
+        sprintf(res, "T%d", n++);
+        struct node *newTemp = newTableNode(res, "TEMP", leftChild.type, NULL, leftChild.value);
+        addNodeToTable(newTemp);
         struct listNode *instr = newListNode(leftChild, nullNode, nullNode, retNode->info.name);
         addNodeToList(instr);
     }
@@ -190,5 +191,4 @@ void breadthFirstTraversal(struct tree *root){
             queue[++back] = currentNode->right;
         }
     }
-    // printListOfInstr();
 }

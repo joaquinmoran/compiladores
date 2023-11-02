@@ -46,7 +46,6 @@ void addNodeToTable(struct node *newNode){
             aux = newNode;
         }
     }
-    //printTable();
     
 }
 
@@ -68,18 +67,14 @@ void printTable(){
 bool setValueByName(int value, char *name){
     if(head->next != NULL){
         if(strcmp(head->next->info.name, name) == 0){
-            printf("Old value: %d\n", head->next->info.value);
             head->next->info.value = value;
-            printf("New value: %d\n", head->next->info.value);
             return true;
         }    
         struct node *aux = (struct node *)malloc(sizeof(struct node));
         aux = head->next;
         while(aux != NULL) {
             if(strcmp(aux->info.name,name) == 0){
-                printf("Old value: %d\n", aux->info.value);
                 aux->info.value = value;
-                printf("New value: %d\n", aux->info.value);
                 return true;
             }
             aux = aux->next;

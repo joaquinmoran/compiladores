@@ -1,7 +1,10 @@
-int x := 5;
+int x := 2;
 int y := 3;
 x := (x * x);
 y := y * y;
 x := (y * y) + (x + x);
-x := x - 3;
+x := x - 100;
+x := x + 4;
+return x;
 return y;
+return x * y;

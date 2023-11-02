@@ -5,3 +5,5 @@ mv sintaxOfGrammaticExt.tab.c analyzers/
 mv sintaxOfGrammaticExt.tab.h analyzers/
 mv lex.yy.c analyzers/
 ./a.out examples/example.txt
+gcc assemblyGen.s utils/lib.c
+./a.out

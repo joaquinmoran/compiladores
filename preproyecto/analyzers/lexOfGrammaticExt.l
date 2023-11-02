@@ -19,38 +19,38 @@ digit [0-9]
 %%
 
 {digit}+                  {yylval.i = atoi(yytext);
-                            printf("INT : %d\n",atoi(yytext)); 
+                            
                             return INT;}
                 
 int                          {return INTEGER;}
 
-bool                         {printf("%s\n",yytext);
+bool                         {
                                 return BOOLEAN;}
 
                                 
-return                      {printf("%s\n",yytext);
+return                      {
                                 return RETURN;} 
 
-True                         {printf("%s\n",yytext);
+True                         {
                                 return TBOOL;} 
 
-False                       {printf("%s\n",yytext);
+False                       {;
                                 return FBOOL;} 
 
 {letter}({letter}|{digit})*        {yylval.s =(char *) malloc(sizeof(yytext)*yyleng);
                                     strcpy(yylval.s,yytext);
-                                    printf("ID : %s\n", yytext);
+                                    
                                     return ID;}
         
 
-"-"                             {printf("%s\n",yytext);
+"-"                             {
                                   return TMENOS;}
 
-":="                            {printf("%s\n",yytext);
+":="                            {
                                     return TEQ;}
 
 
-[+*;()]                          {printf("%s\n",yytext);
+[+*;()]                          {
                                   return *yytext;}
 
 .|\n                          ; /* ignore all the rest */
@@ -71,7 +71,6 @@ int main(int argc,char *argv[]){
 	yyparse();
 
     if(ast != NULL){
-        //printNode(ast);
         breadthFirstTraversal(ast);
        
     }else{

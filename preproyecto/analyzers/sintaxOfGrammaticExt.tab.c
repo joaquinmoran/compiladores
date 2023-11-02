@@ -1560,12 +1560,12 @@ yyreduce:
                                 printf("NULL POINTER ERROR \n");
                             }else {
                                 genTree = newTree( newNode("ASSIG", "ASSIG->EXPR", rc->info.value)->info, lc, rc);
-                                // bool var = setValueByName(rc->info.value, lc->info.name);
-                                // if(var != true){
-                                //     printf("ERROR(undeclared variable in line %d).\n", yylineno);
-                                //     printf("Aborting compilation...\n");
-                                //     exit(EXIT_FAILURE);
-                                // }
+                                bool var = setValueByName(rc->info.value, lc->info.name);
+                                if(var != true){
+                                    printf("ERROR(undeclared variable in line %d).\n", yylineno);
+                                    printf("Aborting compilation...\n");
+                                    exit(EXIT_FAILURE);
+                                }
                             }
                             if(genTree == NULL){
                                 printf("NULL POINTER ERROR \n");
@@ -1625,19 +1625,19 @@ yyreduce:
 #line 270 "analyzers/sintaxOfGrammaticExt.y"
                    {    
                         struct tree *lc = (yyvsp[0].t);
-                        struct node *node = getNodeByName(lc->info.name);
                         struct tree *retTree;
-                        if(strcmp(node->info.type, "BOOLEAN")==0){
-                           retTree = newTree(newNode("BOOLEAN", "RETURN", lc->info.value)->info, lc, NULL);   
-                        }else {
-                            retTree = newTree(newNode("INTEGER", "RETURN", (yyvsp[0].t)->info.value)->info, lc, NULL);   
+                        if(strcmp(lc->info.type,"EXPR") == 0){
+                            retTree = newTree(newNode("EXPR", "RETURN", lc->info.value)->info, lc, NULL);
+                        }else{
+                            struct node *node = getNodeByName(lc->info.name);
+                            if(strcmp(node->info.type, "BOOLEAN")==0){
+                                retTree = newTree(newNode("BOOLEAN", "RETURN", lc->info.value)->info, lc, NULL);   
+                            }else {
+                                retTree = newTree(newNode("INTEGER", "RETURN", lc->info.value)->info, lc, NULL);   
+                            }
                         }
-
-                        if(retTree != NULL){
-                            (yyval.t) = retTree;
-                        }else {
-                            printf("NULL RETURN");
-                        }
+                        (yyval.t) = retTree;
+                        
                     }
 #line 1643 "sintaxOfGrammaticExt.tab.c"
     break;

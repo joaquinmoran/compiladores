@@ -797,7 +797,7 @@ case 1:
 YY_RULE_SETUP
 #line 21 "analyzers/lexOfGrammaticExt.l"
 {yylval.i = atoi(yytext);
-                            printf("INT : %d\n",atoi(yytext)); 
+                            
                             return INT;}
 	YY_BREAK
 case 2:
@@ -808,25 +808,25 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 #line 27 "analyzers/lexOfGrammaticExt.l"
-{printf("%s\n",yytext);
+{
                                 return BOOLEAN;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 31 "analyzers/lexOfGrammaticExt.l"
-{printf("%s\n",yytext);
+{
                                 return RETURN;} 
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 34 "analyzers/lexOfGrammaticExt.l"
-{printf("%s\n",yytext);
+{
                                 return TBOOL;} 
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 37 "analyzers/lexOfGrammaticExt.l"
-{printf("%s\n",yytext);
+{;
                                 return FBOOL;} 
 	YY_BREAK
 case 7:
@@ -834,25 +834,25 @@ YY_RULE_SETUP
 #line 40 "analyzers/lexOfGrammaticExt.l"
 {yylval.s =(char *) malloc(sizeof(yytext)*yyleng);
                                     strcpy(yylval.s,yytext);
-                                    printf("ID : %s\n", yytext);
+                                    
                                     return ID;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 46 "analyzers/lexOfGrammaticExt.l"
-{printf("%s\n",yytext);
+{
                                   return TMENOS;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 49 "analyzers/lexOfGrammaticExt.l"
-{printf("%s\n",yytext);
+{
                                     return TEQ;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 53 "analyzers/lexOfGrammaticExt.l"
-{printf("%s\n",yytext);
+{
                                   return *yytext;}
 	YY_BREAK
 case 11:
@@ -1900,7 +1900,6 @@ int main(int argc,char *argv[]){
 	yyparse();
 
     if(ast != NULL){
-        //printNode(ast);
         breadthFirstTraversal(ast);
        
     }else{
