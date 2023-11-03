@@ -253,8 +253,13 @@ void listTraverse(){
                 fprintf(assemblyFile, "    call    printInt\n");
             }else{
                 struct node *node = getNodeByName(currentNode->left.name);
-                fprintf(assemblyFile, "    movq    %d(%%rbp), %%rdi\n", node->info.offset);
-                fprintf(assemblyFile, "    call    printInt\n");
+                if(strcmp(node->info.type,"BOOLEAN") == 0){
+                    fprintf(assemblyFile, "    movq    %d(%%rbp), %%rdi\n", node->info.offset);
+                    fprintf(assemblyFile, "    call    printBool\n");
+                }else{
+                    fprintf(assemblyFile, "    movq    %d(%%rbp), %%rdi\n", node->info.offset);
+                    fprintf(assemblyFile, "    call    printInt\n");
+                }
             }
         } 
 

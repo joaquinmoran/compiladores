@@ -191,4 +191,5 @@ void breadthFirstTraversal(struct tree *root){
             queue[++back] = currentNode->right;
         }
     }
+    printListOfInstr();
 }

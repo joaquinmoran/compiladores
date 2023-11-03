@@ -14,6 +14,93 @@ extern int error_flag;
 
 extern struct tree *ast = NULL;
 
+struct tree *checkTypeForSum(struct tree*lc, struct tree *rc){
+    if(strcmp(lc->info.type,"ID") == 0){
+        struct node *leftOp = getNodeByName(lc->info.name);
+        if(strcmp(rc->info.type,"ID") == 0){
+            struct node *rightOp = getNodeByName(rc->info.name);
+            if(strcmp(leftOp->info.type, rightOp->info.type) == 0){
+                return newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
+            }
+        }else{
+            if(strcmp(leftOp->info.type, rc->info.type) == 0){
+                return newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
+            }
+        }
+    }else{
+        if(strcmp(rc->info.type,"ID") == 0){
+            struct node *rightOp = getNodeByName(rc->info.name);
+            if(strcmp(lc->info.type, rightOp->info.type) == 0){
+                return newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
+            }
+        }else{
+            if(strcmp(lc->info.type,rc->info.type) == 0){
+                return newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
+            }
+        }
+    }
+    return NULL;
+}
+
+struct tree *checkTypeForProd(struct tree*lc, struct tree *rc){
+    if(strcmp(lc->info.type,"ID") == 0){
+        struct node *leftOp = getNodeByName(lc->info.name);
+        if(strcmp(rc->info.type,"ID") == 0){
+            struct node *rightOp = getNodeByName(rc->info.name);
+            if(strcmp(leftOp->info.type, rightOp->info.type) == 0){
+                return newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
+            }
+        }else{
+            if(strcmp(leftOp->info.type, rc->info.type) == 0){
+                return newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
+            }
+        }
+    }else{
+        if(strcmp(rc->info.type,"ID") == 0){
+            struct node *rightOp = getNodeByName(rc->info.name);
+            if(strcmp(lc->info.type, rightOp->info.type) == 0){
+                return newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
+            }
+        }else{
+            if(strcmp(lc->info.type,rc->info.type) == 0){
+                return newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
+            }
+        }
+    }
+    return NULL;
+}
+
+struct tree *checkTypeForSubt(struct tree*lc, struct tree *rc){
+    if(strcmp(lc->info.type,"ID") == 0){
+        struct node *leftOp = getNodeByName(lc->info.name);
+        if(strcmp(rc->info.type,"ID") == 0){
+            struct node *rightOp = getNodeByName(rc->info.name);
+            if(strcmp(leftOp->info.type, rightOp->info.type) == 0){
+                return newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
+            }
+        }else{
+            if(strcmp(leftOp->info.type, rc->info.type) == 0){
+                return newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
+            }
+        }
+    }else{
+        if(strcmp(rc->info.type,"ID") == 0){
+            struct node *rightOp = getNodeByName(rc->info.name);
+            if(strcmp(lc->info.type, rightOp->info.type) == 0){
+                return newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
+            }
+        }else{
+            if(strcmp(lc->info.type,rc->info.type) == 0){
+                return newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
+            }
+        }
+    }
+    return NULL;
+}
+
+
+
+
 
 
 %}
@@ -150,12 +237,14 @@ expr: IVALOR            {
                         }
 
     | expr '+' expr  {  
-                        struct tree *genTree;
+                        
                         struct tree *lc = $1;
                         struct tree *rc = $3;
-                        genTree = newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
+                        struct tree *genTree = checkTypeForSum(lc, rc);
                         if(genTree == NULL){
-                            printf("NULL POINTER ERROR \n");
+                            printf("ERROR(incompatible types in line %d).\n", yylineno);
+                            printf("Aborting compilation...\n");
+                            exit(EXIT_FAILURE);                        
                         }else {
                             $$ = genTree;
                         }
@@ -163,14 +252,14 @@ expr: IVALOR            {
                      }
 
     | expr '*' expr {
-                        struct tree *genTree;
+                        
                         struct tree *lc = $1;
                         struct tree *rc = $3; 
-                        int valL = getValueByName(lc->info.name);
-                        int valR = getValueByName(rc->info.name);
-                        genTree = newTree( newNode("EXPR", "PROD", (valL * valR))->info, lc, rc);
+                        struct tree *genTree = checkTypeForProd(lc, rc);
                         if(genTree == NULL){
-                            printf("NULL POINTER ERROR \n");
+                            printf("ERROR(incompatible types in line %d).\n", yylineno);
+                            printf("Aborting compilation...\n");
+                            exit(EXIT_FAILURE);
                         }else {
                             $$ = genTree;
                         }
@@ -180,12 +269,14 @@ expr: IVALOR            {
 
 
     | expr TMENOS expr {
-                            struct tree *genTree;
+                            
                             struct tree *lc = $1;
                             struct tree *rc = $3;
-                            genTree = newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
+                            struct tree *genTree = checkTypeForSubt(lc, rc);
                             if(genTree == NULL){
-                                printf("NULL POINTER ERROR \n");
+                                printf("ERROR(incompatible types in line %d).\n", yylineno);
+                                printf("Aborting compilation...\n");
+                                exit(EXIT_FAILURE);
                             }else {
                                 $$ = genTree;
                             }
@@ -251,17 +342,17 @@ VAR: ID             {  $$ = newNode("ID",$1,-1);}
     ;
 
 IVALOR: INT         {
-                        struct tree *intValueTree = newNode("INT", "IVALUE", $1);
+                        struct tree *intValueTree = newNode("INTEGER", "IVALUE", $1);
                         $$  = intValueTree;
                     }
 
         | TBOOL     {   
-                        struct tree *tBoolValueTree = newNode("TBOOL", "TVALUE", 1);
+                        struct tree *tBoolValueTree = newNode("BOOLEAN", "TVALUE", 1);
                         $$  = tBoolValueTree;
                     }
 
         | FBOOL     {   
-                        struct tree *fBoolValueTree = newNode("FBOOL", "FVALUE", 0);
+                        struct tree *fBoolValueTree = newNode("BOOLEAN", "FVALUE", 0);
                         $$  = fBoolValueTree;
                     }
      ;
@@ -274,7 +365,7 @@ ret: RETURN expr   {
                             retTree = newTree(newNode("EXPR", "RETURN", lc->info.value)->info, lc, NULL);
                         }else{
                             struct node *node = getNodeByName(lc->info.name);
-                            if(strcmp(node->info.type, "BOOLEAN")==0){
+                            if(strcmp(node->info.type, "BOOLEAN") == 0){
                                 retTree = newTree(newNode("BOOLEAN", "RETURN", lc->info.value)->info, lc, NULL);   
                             }else {
                                 retTree = newTree(newNode("INTEGER", "RETURN", lc->info.value)->info, lc, NULL);   

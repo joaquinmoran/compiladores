@@ -1900,7 +1900,7 @@ int main(int argc,char *argv[]){
 	yyparse();
 
     if(ast != NULL){
-        breadthFirstTraversal(ast);
+       breadthFirstTraversal(ast);
        
     }else{
         fprintf(stderr, "Error: el árbol está vacío o no se generó correctamente.\n");
