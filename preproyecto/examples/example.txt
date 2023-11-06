@@ -1,9 +1,13 @@
 int x := 5;
 int y := 3;
 bool z := True;
+bool c := False; 
 x := (x + x);
 y := y * y;
 x := (y * y) + (x + x);
-x := y  4;
+return z * c;
+return x * 4;
+return 4;
 return x;
 return z;
+return True;

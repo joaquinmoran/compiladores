@@ -13,6 +13,8 @@ int tempN = 0;
 char temp[10];
 int lastTemp;
 
+extern bool isBoolExpr;
+
 void tempMeth(){
     sprintf(temp, "T%d", tempN);
     struct node *tempNode = getNodeByName(temp);
@@ -247,11 +249,30 @@ void listTraverse(){
             fflush(assemblyFile);
         } 
 
-        if(strcmp(currentNode->instr,"RETURN") == 0){
+        if((strcmp(currentNode->instr,"RETURNINT") == 0)){
             if(strcmp(currentNode->left.type, "EXPR") == 0){
                 fprintf(assemblyFile, "    movq    $%d, %%rdi\n", currentNode->left.value);
                 fprintf(assemblyFile, "    call    printInt\n");
             }else{
+                struct node *node = getNodeByName(currentNode->left.name);
+                printf(assemblyFile, "    movq    %d(%%rbp), %%rdi\n", node->info.offset);
+                fprintf(assemblyFile, "    call    printInt\n");
+            }
+        }
+
+        if(strcmp(currentNode->instr,"RETURNBOOL") == 0){
+            if((strcmp(currentNode->left.type, "EXPR") == 0)){
+                fprintf(assemblyFile, "    movq    $%d, %%rdi\n", currentNode->left.value);
+                fprintf(assemblyFile, "    call    printBool\n");
+            }else{
+                struct node *node = getNodeByName(currentNode->left.name);
+                fprintf(assemblyFile, "    movq    %d(%%rbp), %%rdi\n", node->info.offset);
+                fprintf(assemblyFile, "    call    printBool\n");
+            }
+        }
+        
+        if(strcmp(currentNode->instr,"RETURN") == 0){
+            if(strcmp(currentNode->left.type,"ID") == 0){
                 struct node *node = getNodeByName(currentNode->left.name);
                 if(strcmp(node->info.type,"BOOLEAN") == 0){
                     fprintf(assemblyFile, "    movq    %d(%%rbp), %%rdi\n", node->info.offset);
@@ -260,10 +281,18 @@ void listTraverse(){
                     fprintf(assemblyFile, "    movq    %d(%%rbp), %%rdi\n", node->info.offset);
                     fprintf(assemblyFile, "    call    printInt\n");
                 }
+            }else{
+                if(strcmp(currentNode->left.type,"BOOLEAN") == 0){
+                    fprintf(assemblyFile, "    movq    $%d, %%rdi\n", currentNode->left.value);
+                    fprintf(assemblyFile, "    call    printBool\n");
+                }else{
+                    fprintf(assemblyFile, "    movq    $%d, %%rdi\n", currentNode->left.value);
+                    fprintf(assemblyFile, "    call    printInt\n");
+                }
             }
-        } 
-
-    }
+        }
+                
+    }     
     fprintf(assemblyFile, "    leave\n");
     fprintf(assemblyFile, "    ret\n");
     fprintf(assemblyFile," \n");
@@ -273,7 +302,6 @@ void listTraverse(){
     fprintf(assemblyFile," \n");
     fprintf(assemblyFile, "    .size	main, .-main\n");
     fprintf(assemblyFile, "   .section	.note.GNU-stack,\"\",@progbits\n");
-    fflush(assemblyFile);
     fclose(assemblyFile);
 
 }

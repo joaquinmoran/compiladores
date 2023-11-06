@@ -14,16 +14,24 @@ extern int error_flag;
 
 extern struct tree *ast = NULL;
 
+extern bool isBoolExpr = false;
+
 struct tree *checkTypeForSum(struct tree*lc, struct tree *rc){
     if(strcmp(lc->info.type,"ID") == 0){
         struct node *leftOp = getNodeByName(lc->info.name);
         if(strcmp(rc->info.type,"ID") == 0){
             struct node *rightOp = getNodeByName(rc->info.name);
             if(strcmp(leftOp->info.type, rightOp->info.type) == 0){
+                if(strcmp(leftOp->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
             }
         }else{
             if(strcmp(leftOp->info.type, rc->info.type) == 0){
+                if(strcmp(leftOp->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
             }
         }
@@ -31,10 +39,16 @@ struct tree *checkTypeForSum(struct tree*lc, struct tree *rc){
         if(strcmp(rc->info.type,"ID") == 0){
             struct node *rightOp = getNodeByName(rc->info.name);
             if(strcmp(lc->info.type, rightOp->info.type) == 0){
+                if(strcmp(lc->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
             }
         }else{
             if(strcmp(lc->info.type,rc->info.type) == 0){
+                if(strcmp(lc->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
             }
         }
@@ -48,10 +62,16 @@ struct tree *checkTypeForProd(struct tree*lc, struct tree *rc){
         if(strcmp(rc->info.type,"ID") == 0){
             struct node *rightOp = getNodeByName(rc->info.name);
             if(strcmp(leftOp->info.type, rightOp->info.type) == 0){
+                if(strcmp(leftOp->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
             }
         }else{
             if(strcmp(leftOp->info.type, rc->info.type) == 0){
+                if(strcmp(leftOp->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
             }
         }
@@ -59,10 +79,16 @@ struct tree *checkTypeForProd(struct tree*lc, struct tree *rc){
         if(strcmp(rc->info.type,"ID") == 0){
             struct node *rightOp = getNodeByName(rc->info.name);
             if(strcmp(lc->info.type, rightOp->info.type) == 0){
+                if(strcmp(lc->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
             }
         }else{
             if(strcmp(lc->info.type,rc->info.type) == 0){
+                if(strcmp(lc->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
             }
         }
@@ -76,10 +102,16 @@ struct tree *checkTypeForSubt(struct tree*lc, struct tree *rc){
         if(strcmp(rc->info.type,"ID") == 0){
             struct node *rightOp = getNodeByName(rc->info.name);
             if(strcmp(leftOp->info.type, rightOp->info.type) == 0){
+                if(strcmp(leftOp->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
             }
         }else{
             if(strcmp(leftOp->info.type, rc->info.type) == 0){
+                if(strcmp(leftOp->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
             }
         }
@@ -87,10 +119,16 @@ struct tree *checkTypeForSubt(struct tree*lc, struct tree *rc){
         if(strcmp(rc->info.type,"ID") == 0){
             struct node *rightOp = getNodeByName(rc->info.name);
             if(strcmp(lc->info.type, rightOp->info.type) == 0){
+                if(strcmp(lc->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
             }
         }else{
             if(strcmp(lc->info.type,rc->info.type) == 0){
+                if(strcmp(lc->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
             }
         }
@@ -174,15 +212,15 @@ prog:  decl ';'      {
                      }
     | ret ';'       {
                         struct tree *retTree = $1;
-                        if(strcmp(retTree->info.type, "BOOLEAN") == 0){
-                            if(retTree->info.value != 0){
-                                printf("True\n");
-                            }else{
-                                printf("False\n");
-                            }
-                        }else {
-                            printf("Result: %d\n", retTree->info.value);
-                        }
+                        // if(strcmp(retTree->info.type, "BOOLEAN") == 0){
+                        //     if(retTree->info.value != 0){
+                        //         printf("True\n");
+                        //     }else{
+                        //         printf("False\n");
+                        //     }
+                        // }else {
+                        //     printf("Result: %d\n", retTree->info.value);
+                        // }
                         ast = retTree;
                         $$ = retTree;
                     }
@@ -191,15 +229,17 @@ prog:  decl ';'      {
                         struct tree *lc = $1;
                         struct tree *rc = $3;
                         struct tree *retAssigTree;
-                        if(strcmp(lc->info.type, "BOOLEAN") == 0){
-                                if(lc->info.value != 0){
-                                    printf("True\n");
-                                }else{
-                                    printf("False\n");
-                                }
-                            }else {
-                                    printf("Result: %d\n", lc->info.value);
-                            }
+                        // if(strcmp(lc->info.type, "BOOLEAN") == 0){
+                        //         if(lc->info.value != 0){
+
+                        //         }
+                        //         //     printf("True\n");
+                        //         // }else{
+                        //         //     printf("False\n");
+                        //         // }
+                        //     }else {
+                        //             printf("Result: %d\n", lc->info.value);
+                        //     }
                                 
                         if(lc == NULL && rc == NULL){
                             printf("NULL POINTER ERROR");
@@ -316,11 +356,11 @@ assig: VAR TEQ expr     {
                             }else {
                                 genTree = newTree( newNode("ASSIG", "ASSIG->EXPR", rc->info.value)->info, lc, rc);
                                 bool var = setValueByName(rc->info.value, lc->info.name);
-                                if(var != true){
-                                    printf("ERROR(undeclared variable in line %d).\n", yylineno);
-                                    printf("Aborting compilation...\n");
-                                    exit(EXIT_FAILURE);
-                                }
+                                    if(var != true){
+                                        printf("ERROR(undeclared variable in line %d).\n", yylineno);
+                                        printf("Aborting compilation...\n");
+                                        exit(EXIT_FAILURE);
+                                    }
                             }
                             if(genTree == NULL){
                                 printf("NULL POINTER ERROR \n");
@@ -362,16 +402,30 @@ ret: RETURN expr   {
                         struct tree *lc = $2;
                         struct tree *retTree;
                         if(strcmp(lc->info.type,"EXPR") == 0){
-                            retTree = newTree(newNode("EXPR", "RETURN", lc->info.value)->info, lc, NULL);
+                            if(isBoolExpr){
+                                retTree = newTree(newNode("BOOLEXPR", "RETURNBOOL", lc->info.value)->info, lc, NULL);
+                                isBoolExpr = false;
+                            }else{
+                                retTree = newTree(newNode("INTEXPR", "RETURNINT", lc->info.value)->info, lc, NULL);
+                            }
                         }else{
-                            struct node *node = getNodeByName(lc->info.name);
-                            if(strcmp(node->info.type, "BOOLEAN") == 0){
-                                retTree = newTree(newNode("BOOLEAN", "RETURN", lc->info.value)->info, lc, NULL);   
-                            }else {
-                                retTree = newTree(newNode("INTEGER", "RETURN", lc->info.value)->info, lc, NULL);   
+                            if(strcmp(lc->info.type, "ID") == 0){
+                                struct node *node = getNodeByName(lc->info.name);
+                                if(strcmp(node->info.type, "BOOLEAN") == 0){
+                                    retTree = newTree(newNode("BOOLEAN", "RETURN", lc->info.value)->info, lc, NULL);   
+                                }else {
+                                    retTree = newTree(newNode("INTEGER", "RETURN", lc->info.value)->info, lc, NULL);   
+                                }
+                            }else{
+                                if(strcmp(lc->info.type, "BOOLEAN") == 0){
+                                    retTree = newTree(newNode("BOOLEAN", "RETURN", lc->info.value)->info, lc, NULL);   
+                                }else{
+                                    retTree = newTree(newNode("INTEGER", "RETURN", lc->info.value)->info, lc, NULL);   
+                                }
                             }
                         }
                         $$ = retTree;
+                    
                         
                     }
 

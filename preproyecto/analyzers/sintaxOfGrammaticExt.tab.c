@@ -83,16 +83,24 @@ extern int error_flag;
 
 extern struct tree *ast = NULL;
 
+extern bool isBoolExpr = false;
+
 struct tree *checkTypeForSum(struct tree*lc, struct tree *rc){
     if(strcmp(lc->info.type,"ID") == 0){
         struct node *leftOp = getNodeByName(lc->info.name);
         if(strcmp(rc->info.type,"ID") == 0){
             struct node *rightOp = getNodeByName(rc->info.name);
             if(strcmp(leftOp->info.type, rightOp->info.type) == 0){
+                if(strcmp(leftOp->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
             }
         }else{
             if(strcmp(leftOp->info.type, rc->info.type) == 0){
+                if(strcmp(leftOp->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
             }
         }
@@ -100,10 +108,16 @@ struct tree *checkTypeForSum(struct tree*lc, struct tree *rc){
         if(strcmp(rc->info.type,"ID") == 0){
             struct node *rightOp = getNodeByName(rc->info.name);
             if(strcmp(lc->info.type, rightOp->info.type) == 0){
+                if(strcmp(lc->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
             }
         }else{
             if(strcmp(lc->info.type,rc->info.type) == 0){
+                if(strcmp(lc->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUM", (lc->info.value + rc->info.value))->info, lc, rc);
             }
         }
@@ -117,10 +131,16 @@ struct tree *checkTypeForProd(struct tree*lc, struct tree *rc){
         if(strcmp(rc->info.type,"ID") == 0){
             struct node *rightOp = getNodeByName(rc->info.name);
             if(strcmp(leftOp->info.type, rightOp->info.type) == 0){
+                if(strcmp(leftOp->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
             }
         }else{
             if(strcmp(leftOp->info.type, rc->info.type) == 0){
+                if(strcmp(leftOp->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
             }
         }
@@ -128,10 +148,16 @@ struct tree *checkTypeForProd(struct tree*lc, struct tree *rc){
         if(strcmp(rc->info.type,"ID") == 0){
             struct node *rightOp = getNodeByName(rc->info.name);
             if(strcmp(lc->info.type, rightOp->info.type) == 0){
+                if(strcmp(lc->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
             }
         }else{
             if(strcmp(lc->info.type,rc->info.type) == 0){
+                if(strcmp(lc->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "PROD", (lc->info.value * rc->info.value))->info, lc, rc);
             }
         }
@@ -145,10 +171,16 @@ struct tree *checkTypeForSubt(struct tree*lc, struct tree *rc){
         if(strcmp(rc->info.type,"ID") == 0){
             struct node *rightOp = getNodeByName(rc->info.name);
             if(strcmp(leftOp->info.type, rightOp->info.type) == 0){
+                if(strcmp(leftOp->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
             }
         }else{
             if(strcmp(leftOp->info.type, rc->info.type) == 0){
+                if(strcmp(leftOp->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
             }
         }
@@ -156,10 +188,16 @@ struct tree *checkTypeForSubt(struct tree*lc, struct tree *rc){
         if(strcmp(rc->info.type,"ID") == 0){
             struct node *rightOp = getNodeByName(rc->info.name);
             if(strcmp(lc->info.type, rightOp->info.type) == 0){
+                if(strcmp(lc->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
             }
         }else{
             if(strcmp(lc->info.type,rc->info.type) == 0){
+                if(strcmp(lc->info.type,"BOOLEAN") == 0){
+                    isBoolExpr = true;
+                }
                 return newTree( newNode("EXPR", "SUBT", (lc->info.value - rc->info.value))->info, lc, rc);
             }
         }
@@ -173,7 +211,7 @@ struct tree *checkTypeForSubt(struct tree*lc, struct tree *rc){
 
 
 
-#line 177 "sintaxOfGrammaticExt.tab.c"
+#line 215 "sintaxOfGrammaticExt.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -237,10 +275,10 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 107 "analyzers/sintaxOfGrammaticExt.y"
+#line 145 "analyzers/sintaxOfGrammaticExt.y"
  int i; char *s; struct tree *t
 
-#line 244 "sintaxOfGrammaticExt.tab.c"
+#line 282 "sintaxOfGrammaticExt.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -616,9 +654,9 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   137,   137,   143,   150,   163,   175,   190,   222,   227,
-     239,   254,   268,   271,   287,   310,   336,   338,   341,   344,
-     349,   354,   361
+       0,   175,   175,   181,   188,   201,   213,   228,   262,   267,
+     279,   294,   308,   311,   327,   350,   376,   378,   381,   384,
+     389,   394,   401
 };
 #endif
 
@@ -1427,27 +1465,27 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 137 "analyzers/sintaxOfGrammaticExt.y"
+#line 175 "analyzers/sintaxOfGrammaticExt.y"
                      {
                         struct tree *declTree = (yyvsp[-1].t);//newTree(newNode("DECL ; EMPTY ", "SIMPLE", -1)->info, $1, NULL);
                         ast = declTree;
                         (yyval.t) = declTree;
                     }
-#line 1437 "sintaxOfGrammaticExt.tab.c"
+#line 1475 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 3:
-#line 143 "analyzers/sintaxOfGrammaticExt.y"
+#line 181 "analyzers/sintaxOfGrammaticExt.y"
                     {
                         struct tree *assigTree = (yyvsp[-1].t);
                         ast = assigTree;
                         (yyval.t) = assigTree;
                      }
-#line 1447 "sintaxOfGrammaticExt.tab.c"
+#line 1485 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 4:
-#line 150 "analyzers/sintaxOfGrammaticExt.y"
+#line 188 "analyzers/sintaxOfGrammaticExt.y"
                         {
                             struct tree *lc = (yyvsp[-2].t);
                             struct tree *rc = (yyvsp[0].t);
@@ -1460,11 +1498,11 @@ yyreduce:
                             ast = declProgTree;
                             (yyval.t) = declProgTree;
                         }
-#line 1464 "sintaxOfGrammaticExt.tab.c"
+#line 1502 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 5:
-#line 163 "analyzers/sintaxOfGrammaticExt.y"
+#line 201 "analyzers/sintaxOfGrammaticExt.y"
                      {
                         struct tree *lc = (yyvsp[-2].t);
                         struct tree *rc = (yyvsp[0].t);
@@ -1477,43 +1515,45 @@ yyreduce:
                         ast = assigProgTree;
                         (yyval.t) = assigProgTree;
                      }
-#line 1481 "sintaxOfGrammaticExt.tab.c"
+#line 1519 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 6:
-#line 175 "analyzers/sintaxOfGrammaticExt.y"
+#line 213 "analyzers/sintaxOfGrammaticExt.y"
                     {
                         struct tree *retTree = (yyvsp[-1].t);
-                        if(strcmp(retTree->info.type, "BOOLEAN") == 0){
-                            if(retTree->info.value != 0){
-                                printf("True\n");
-                            }else{
-                                printf("False\n");
-                            }
-                        }else {
-                            printf("Result: %d\n", retTree->info.value);
-                        }
+                        // if(strcmp(retTree->info.type, "BOOLEAN") == 0){
+                        //     if(retTree->info.value != 0){
+                        //         printf("True\n");
+                        //     }else{
+                        //         printf("False\n");
+                        //     }
+                        // }else {
+                        //     printf("Result: %d\n", retTree->info.value);
+                        // }
                         ast = retTree;
                         (yyval.t) = retTree;
                     }
-#line 1500 "sintaxOfGrammaticExt.tab.c"
+#line 1538 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 7:
-#line 190 "analyzers/sintaxOfGrammaticExt.y"
+#line 228 "analyzers/sintaxOfGrammaticExt.y"
                      { 
                         struct tree *lc = (yyvsp[-2].t);
                         struct tree *rc = (yyvsp[0].t);
                         struct tree *retAssigTree;
-                        if(strcmp(lc->info.type, "BOOLEAN") == 0){
-                                if(lc->info.value != 0){
-                                    printf("True\n");
-                                }else{
-                                    printf("False\n");
-                                }
-                            }else {
-                                    printf("Result: %d\n", lc->info.value);
-                            }
+                        // if(strcmp(lc->info.type, "BOOLEAN") == 0){
+                        //         if(lc->info.value != 0){
+
+                        //         }
+                        //         //     printf("True\n");
+                        //         // }else{
+                        //         //     printf("False\n");
+                        //         // }
+                        //     }else {
+                        //             printf("Result: %d\n", lc->info.value);
+                        //     }
                                 
                         if(lc == NULL && rc == NULL){
                             printf("NULL POINTER ERROR");
@@ -1529,20 +1569,20 @@ yyreduce:
                         ast = retAssigTree;
                         (yyval.t) = retAssigTree;
                      }
-#line 1533 "sintaxOfGrammaticExt.tab.c"
+#line 1573 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 8:
-#line 222 "analyzers/sintaxOfGrammaticExt.y"
+#line 262 "analyzers/sintaxOfGrammaticExt.y"
                         {
                             struct tree *iVal = (yyvsp[0].t);
                             (yyval.t) = iVal;
                         }
-#line 1542 "sintaxOfGrammaticExt.tab.c"
+#line 1582 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 9:
-#line 227 "analyzers/sintaxOfGrammaticExt.y"
+#line 267 "analyzers/sintaxOfGrammaticExt.y"
                         {
                             struct tree *iVar = (yyvsp[0].t);
                             int val = getValueByName(iVar->info.name);
@@ -1554,11 +1594,11 @@ yyreduce:
                             iVar->info.value = val;
                             (yyval.t) = iVar;
                         }
-#line 1558 "sintaxOfGrammaticExt.tab.c"
+#line 1598 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 10:
-#line 239 "analyzers/sintaxOfGrammaticExt.y"
+#line 279 "analyzers/sintaxOfGrammaticExt.y"
                      {  
                         
                         struct tree *lc = (yyvsp[-2].t);
@@ -1573,11 +1613,11 @@ yyreduce:
                         }
 
                      }
-#line 1577 "sintaxOfGrammaticExt.tab.c"
+#line 1617 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 11:
-#line 254 "analyzers/sintaxOfGrammaticExt.y"
+#line 294 "analyzers/sintaxOfGrammaticExt.y"
                     {
                         
                         struct tree *lc = (yyvsp[-2].t);
@@ -1591,17 +1631,17 @@ yyreduce:
                             (yyval.t) = genTree;
                         }
                     }
-#line 1595 "sintaxOfGrammaticExt.tab.c"
+#line 1635 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 12:
-#line 268 "analyzers/sintaxOfGrammaticExt.y"
+#line 308 "analyzers/sintaxOfGrammaticExt.y"
                     {(yyval.t) = (yyvsp[-1].t);}
-#line 1601 "sintaxOfGrammaticExt.tab.c"
+#line 1641 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 13:
-#line 271 "analyzers/sintaxOfGrammaticExt.y"
+#line 311 "analyzers/sintaxOfGrammaticExt.y"
                        {
                             
                             struct tree *lc = (yyvsp[-2].t);
@@ -1615,11 +1655,11 @@ yyreduce:
                                 (yyval.t) = genTree;
                             }
                         }
-#line 1619 "sintaxOfGrammaticExt.tab.c"
+#line 1659 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 14:
-#line 288 "analyzers/sintaxOfGrammaticExt.y"
+#line 328 "analyzers/sintaxOfGrammaticExt.y"
                             {
                                 struct tree *i = (yyvsp[-3].t);
                                 struct tree *lc = (yyvsp[-2].t);
@@ -1638,11 +1678,11 @@ yyreduce:
                                 struct tree *genTree = newTree( newNode("DECL",i->info.type,-1)->info, lc, rc);
                                 (yyval.t) = genTree;
                              }
-#line 1642 "sintaxOfGrammaticExt.tab.c"
+#line 1682 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 15:
-#line 310 "analyzers/sintaxOfGrammaticExt.y"
+#line 350 "analyzers/sintaxOfGrammaticExt.y"
                         {
                             struct tree *lc = (yyvsp[-2].t);
                             struct tree *rc = (yyvsp[0].t);
@@ -1652,11 +1692,11 @@ yyreduce:
                             }else {
                                 genTree = newTree( newNode("ASSIG", "ASSIG->EXPR", rc->info.value)->info, lc, rc);
                                 bool var = setValueByName(rc->info.value, lc->info.name);
-                                if(var != true){
-                                    printf("ERROR(undeclared variable in line %d).\n", yylineno);
-                                    printf("Aborting compilation...\n");
-                                    exit(EXIT_FAILURE);
-                                }
+                                    if(var != true){
+                                        printf("ERROR(undeclared variable in line %d).\n", yylineno);
+                                        printf("Aborting compilation...\n");
+                                        exit(EXIT_FAILURE);
+                                    }
                             }
                             if(genTree == NULL){
                                 printf("NULL POINTER ERROR \n");
@@ -1664,77 +1704,91 @@ yyreduce:
                                 (yyval.t) = genTree;
                             }
                         }
-#line 1668 "sintaxOfGrammaticExt.tab.c"
+#line 1708 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 16:
-#line 336 "analyzers/sintaxOfGrammaticExt.y"
+#line 376 "analyzers/sintaxOfGrammaticExt.y"
                     {(yyval.t) = newNode("INTEGER","NULL", -1);}
-#line 1674 "sintaxOfGrammaticExt.tab.c"
+#line 1714 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 17:
-#line 338 "analyzers/sintaxOfGrammaticExt.y"
+#line 378 "analyzers/sintaxOfGrammaticExt.y"
                     {(yyval.t) = newNode("BOOLEAN","NULL",-1);}
-#line 1680 "sintaxOfGrammaticExt.tab.c"
+#line 1720 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 18:
-#line 341 "analyzers/sintaxOfGrammaticExt.y"
+#line 381 "analyzers/sintaxOfGrammaticExt.y"
                     {  (yyval.t) = newNode("ID",(yyvsp[0].s),-1);}
-#line 1686 "sintaxOfGrammaticExt.tab.c"
+#line 1726 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 19:
-#line 344 "analyzers/sintaxOfGrammaticExt.y"
+#line 384 "analyzers/sintaxOfGrammaticExt.y"
                     {
                         struct tree *intValueTree = newNode("INTEGER", "IVALUE", (yyvsp[0].i));
                         (yyval.t)  = intValueTree;
                     }
-#line 1695 "sintaxOfGrammaticExt.tab.c"
+#line 1735 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 20:
-#line 349 "analyzers/sintaxOfGrammaticExt.y"
+#line 389 "analyzers/sintaxOfGrammaticExt.y"
                     {   
                         struct tree *tBoolValueTree = newNode("BOOLEAN", "TVALUE", 1);
                         (yyval.t)  = tBoolValueTree;
                     }
-#line 1704 "sintaxOfGrammaticExt.tab.c"
+#line 1744 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 21:
-#line 354 "analyzers/sintaxOfGrammaticExt.y"
+#line 394 "analyzers/sintaxOfGrammaticExt.y"
                     {   
                         struct tree *fBoolValueTree = newNode("BOOLEAN", "FVALUE", 0);
                         (yyval.t)  = fBoolValueTree;
                     }
-#line 1713 "sintaxOfGrammaticExt.tab.c"
+#line 1753 "sintaxOfGrammaticExt.tab.c"
     break;
 
   case 22:
-#line 361 "analyzers/sintaxOfGrammaticExt.y"
+#line 401 "analyzers/sintaxOfGrammaticExt.y"
                    {    
                         struct tree *lc = (yyvsp[0].t);
                         struct tree *retTree;
                         if(strcmp(lc->info.type,"EXPR") == 0){
-                            retTree = newTree(newNode("EXPR", "RETURN", lc->info.value)->info, lc, NULL);
+                            if(isBoolExpr){
+                                retTree = newTree(newNode("BOOLEXPR", "RETURNBOOL", lc->info.value)->info, lc, NULL);
+                                isBoolExpr = false;
+                            }else{
+                                retTree = newTree(newNode("INTEXPR", "RETURNINT", lc->info.value)->info, lc, NULL);
+                            }
                         }else{
-                            struct node *node = getNodeByName(lc->info.name);
-                            if(strcmp(node->info.type, "BOOLEAN") == 0){
-                                retTree = newTree(newNode("BOOLEAN", "RETURN", lc->info.value)->info, lc, NULL);   
-                            }else {
-                                retTree = newTree(newNode("INTEGER", "RETURN", lc->info.value)->info, lc, NULL);   
+                            if(strcmp(lc->info.type, "ID") == 0){
+                                struct node *node = getNodeByName(lc->info.name);
+                                if(strcmp(node->info.type, "BOOLEAN") == 0){
+                                    retTree = newTree(newNode("BOOLEAN", "RETURN", lc->info.value)->info, lc, NULL);   
+                                }else {
+                                    retTree = newTree(newNode("INTEGER", "RETURN", lc->info.value)->info, lc, NULL);   
+                                }
+                            }else{
+                                if(strcmp(lc->info.type, "BOOLEAN") == 0){
+                                    retTree = newTree(newNode("BOOLEAN", "RETURN", lc->info.value)->info, lc, NULL);   
+                                }else{
+                                    retTree = newTree(newNode("INTEGER", "RETURN", lc->info.value)->info, lc, NULL);   
+                                }
                             }
                         }
                         (yyval.t) = retTree;
+                    
                         
                     }
-#line 1734 "sintaxOfGrammaticExt.tab.c"
+#line 1788 "sintaxOfGrammaticExt.tab.c"
     break;
 
 
-#line 1738 "sintaxOfGrammaticExt.tab.c"
+#line 1792 "sintaxOfGrammaticExt.tab.c"
 
       default: break;
     }
@@ -1966,4 +2020,4 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 380 "analyzers/sintaxOfGrammaticExt.y"
+#line 434 "analyzers/sintaxOfGrammaticExt.y"
