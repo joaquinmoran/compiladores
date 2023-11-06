@@ -54,7 +54,6 @@ void addNodeToList(struct listNode *newNode){
     }
     aux->next = newNode;
     newNode->next = NULL;
-    printf("%s\n", newNode->instr); 
 }
 
 struct treeNode exprClass(struct tree *exprNode){
@@ -123,12 +122,14 @@ void assigClass(struct tree *assigNode){
 }
         
 void retClass(struct tree *retNode){
-    if(strcmp(retNode->left->info.type,"ID") == 0 || strcmp(retNode->info.name,"IVALUE") == 0){
+    if(strcmp(retNode->left->info.type,"ID") == 0 || strcmp(retNode->left->info.name,"IVALUE") == 0){
         struct listNode *instr = newListNode(retNode->left->info, nullNode, nullNode, retNode->info.name);
         addNodeToList(instr);
     }else{
         struct treeNode leftChild = exprClass(retNode->left);
-        printf("RETURN LEFT IS: %d\n",leftChild.value);
+        sprintf(res, "T%d", n++);
+        struct node *newTemp = newTableNode(res, "TEMP", leftChild.type, NULL, leftChild.value);
+        addNodeToTable(newTemp);
         struct listNode *instr = newListNode(leftChild, nullNode, nullNode, retNode->info.name);
         addNodeToList(instr);
     }
@@ -180,7 +181,9 @@ void breadthFirstTraversal(struct tree *root){
         if(strcmp(currentNode->info.type, "ASSIG") == 0){
             assigClass(currentNode);
         }
-        if(strcmp(currentNode->info.name,"RETURN") == 0){
+
+        if(strcmp(currentNode->info.name,"RETURNINT") == 0 || strcmp(currentNode->info.name,"RETURNBOOL") == 0 
+            || strcmp(currentNode->info.name,"RETURN") == 0){
             retClass(currentNode);
         }
         if(currentNode->left != NULL){
@@ -190,5 +193,5 @@ void breadthFirstTraversal(struct tree *root){
             queue[++back] = currentNode->right;
         }
     }
-    printListOfInstr();
+    //printListOfInstr();
 }
