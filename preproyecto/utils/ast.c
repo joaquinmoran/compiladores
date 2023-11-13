@@ -10,6 +10,8 @@ struct tree *newTree(struct treeNode info, struct tree *leftChild, struct tree *
 
     struct tree *root = (struct tree *)malloc(sizeof(struct tree));
 
+    
+
     if(root == NULL) {
         printf("Error: null pointer");
     }else {
@@ -20,58 +22,32 @@ struct tree *newTree(struct treeNode info, struct tree *leftChild, struct tree *
     return root;
 }
 
-struct tree *newNode(char *t, char *n, int val){
+struct tree *newNode(char * eType, char *t, char *n, int val){
     struct tree *node = (struct tree *)malloc(sizeof(struct tree)); 
 
+    
     if(node == NULL){
         return NULL;
     }
 
-    if(t != NULL && n != NULL){
-        node->info.type = strdup(t);
-        node->info.name = strdup(n);
-    } else {
-        printf("Null argument error");
+    node->info.exprType = malloc(strlen(eType) + 1);
+    node->info.type = malloc(strlen(t) + 1);
+    node->info.name = malloc(strlen(n) + 1);
+    if(node->info.name == NULL || node->info.exprType == NULL ||
+        node->info.type == NULL){
+            fprintf(stderr, "Error: can not assing memory.\n");
+            exit(EXIT_FAILURE);
     }
+    strcpy(node->info.name, n);
+    strcpy(node->info.type, t);
+    strcpy(node->info.exprType, eType);
    
     node->info.value = val;
-    
 
 
     return node; 
 }
 
-// void generateDotFile(FILE *dotFile, struct tree *node, int i) {
-//     if (node == NULL) {
-//         return;
-//     }
-
-//     fprintf(dotFile, "%d [label=\"%s, %s, %d\"];\n", i, node->info.type, node->info.name, node->info.value);
-
-//     if (node->left != NULL) {
-//         fprintf(dotFile, "%d -> %s;\n", i, node->left->info.name);
-//         generateDotFile(dotFile, node->left, i++);
-//     }
-
-//     if (node->right != NULL) {
-//         fprintf(dotFile, "%d -> %s;\n", i, node->right->info.name);
-//         generateDotFile(dotFile, node->right, i++);
-//     }
-// }
-
-// void saveDotFile(struct tree *root) {
-//     FILE *dotFile = fopen("tree.dot", "w");
-//     int i = 0;
-//     if (dotFile == NULL) {
-//         printf("Error: No se pudo abrir el archivo .dot");
-//         return;
-//     }
-
-//     fprintf(dotFile, "digraph Tree {\n");
-//     generateDotFile(dotFile, root, i);
-//     fprintf(dotFile, "}\n");
-//     fclose(dotFile);
-// }
 
 void inOrderPrint(struct tree *tree){
     if(tree == NULL){
