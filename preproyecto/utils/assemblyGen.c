@@ -179,6 +179,7 @@ void listTraverse(){
                         }
                     }
                 }else{
+                    
                     int leftExprRes = currentNode->left.value;
                     if(strcmp(currentNode->right.type,"ID") == 0){
                         struct node *rightNode = getNodeByName(currentNode->right.name);
@@ -242,11 +243,22 @@ void listTraverse(){
 
         if(strcmp(currentNode->instr,"ASSIG") == 0){
             struct node *leftNode = getNodeByName(currentNode->left.name);
-            sprintf(temp, "T%d", lastTemp);
-            struct node *tempNode = getNodeByName(temp);
-            fprintf(assemblyFile, "    movq    %d(%%rbp), %%rax\n", tempNode->info.offset);
-            fprintf(assemblyFile, "    movq    %%rax, %d(%%rbp)\n", leftNode->info.offset);
-            fflush(assemblyFile);
+            if(strcmp(currentNode->right.type,"ID") == 0){
+                struct node *rightNode = getNodeByName(currentNode->right.name);
+                fprintf(assemblyFile, "    movq    %d(%%rbp), %%rax\n", rightNode->info.offset);
+                fprintf(assemblyFile, "    movq    %%rax, %d(%%rbp)\n", leftNode->info.offset);
+            }
+            if(strcmp(currentNode->right.name,"VALUE") == 0){
+                fprintf(assemblyFile, "    movq    $%d, %%rax\n", currentNode->right.value);
+                fprintf(assemblyFile, "    movq    %%rax, %d(%%rbp)\n", leftNode->info.offset);
+            }
+            if(strcmp(currentNode->right.type, "EXPR") == 0){
+                sprintf(temp, "T%d", lastTemp);
+                struct node *tempNode = getNodeByName(temp);
+                fprintf(assemblyFile, "    movq    %d(%%rbp), %%rax\n", tempNode->info.offset);
+                fprintf(assemblyFile, "    movq    %%rax, %d(%%rbp)\n", leftNode->info.offset);
+            }
+            
         } 
 
         if((strcmp(currentNode->instr,"RETURNINT") == 0)){
