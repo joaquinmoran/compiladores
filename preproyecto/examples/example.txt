@@ -4,7 +4,7 @@ bool z := True;
 bool c := False; 
 z := True * c;
 y := 4 * 4;
-x := x * 2 * (3);
+x := x * 2 * (y);
 z := True * True;
 return (z * c);
 return x * 4;  

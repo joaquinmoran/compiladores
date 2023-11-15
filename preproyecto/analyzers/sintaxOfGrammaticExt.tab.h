@@ -65,7 +65,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 252 "analyzers/sintaxOfGrammaticExt.y"
+#line 117 "analyzers/sintaxOfGrammaticExt.y"
  int i; char *s; struct tree *t
 
 #line 72 "sintaxOfGrammaticExt.tab.h"

@@ -22,8 +22,8 @@ main:
     movq    -8(%rbp), %rax
     imulq    $2, %rax
     movq    %rax, -56(%rbp)
-    movq    $10, %rax
-    imulq    $3, %rax
+    movq    -16(%rbp), %rax
+    imulq    $10, %rax
     movq    %rax, -64(%rbp)
     movq    -64(%rbp), %rax
     movq    %rax, -8(%rbp)
@@ -40,7 +40,7 @@ main:
     movq    -8(%rbp), %rax
     imulq    $4, %rax
     movq    %rax, -88(%rbp)
-    movq    $120, %rdi
+    movq    $640, %rdi
     call    printInt
     movq    $4, %rdi
     call    printInt

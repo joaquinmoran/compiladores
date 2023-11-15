@@ -1,13 +1,13 @@
 #include <stdio.h>
 
 void printInt(int x){
-    printf("RESULT: %d\n",x);
+    printf("%d\n",x);
 }
 
 void printBool(int x){
     if(x != 0){
-        printf("RESULT: True\n");
+        printf("True\n");
     }else{
-        printf("RESULT: False\n");
+        printf("False\n");
     }
 }
